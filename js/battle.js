@@ -362,7 +362,9 @@ export class Battlefield {
     u.tx0 = 0; u.ty0 = 0;
 
     if (kind === 'violator') {
-      u.size = clamp(14 + 8 * Math.log10(1 + dataBytes / 100), 16, 92);
+      // Floor of 34px: most violators are tiny BRC-20s (~60B payloads) but
+      // their collection-art faces are the whole show — keep them readable.
+      u.size = clamp(34 + 8 * Math.log10(1 + dataBytes / 100), 34, 92);
     } else if (kind === 'infiltrator') {
       u.size = 24;
     } else {

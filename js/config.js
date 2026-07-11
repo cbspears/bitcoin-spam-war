@@ -45,10 +45,12 @@ export const CONFIG = {
   // stream cools below the un-downgrade rate for a full window.
   hotStream: {
     windowMs: 30000, // sustained-measurement window
-    txPerSecond: 15, // sustained tx/s across the window that trips downgrade
+    txPerSecond: 25, // sustained tx/s across the window that trips downgrade
     // (no per-update threshold: the server batches deltas on its own cadence,
-    // observed anywhere from ~1.7s to ~10s, so batch size ≠ network volume)
-    unDowngradeTxPerSecond: 10, // cool-off rate to probe back to live
+    // observed anywhere from ~1.7s to ~10s, so batch size ≠ network volume.
+    // 25/s: normal traffic is ~2-8/s and a block boundary can burst a few
+    // hundred re-added txs into one window — that alone must not trip it.)
+    unDowngradeTxPerSecond: 15, // cool-off rate to probe back to live
   },
 
   // --- Stream classification budget --------------------------------------
