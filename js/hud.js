@@ -83,8 +83,10 @@ const KNIGHTS = ['LUKE-JR', 'MECHANIC', 'KRATTER', 'ZUCCO', 'the Filter Knights'
 let knightIdx = 0;
 const nextKnight = () => KNIGHTS[knightIdx++ % KNIGHTS.length];
 
-export function initHud({ feed, battlefield, taunts }) {
+export function initHud({ feed, battlefield, taunts, music }) {
   const pickTaunt = (taunts && taunts.pickTaunt) || (() => '');
+  // `music` is optional: the WAR DRUMS score (js/music.js) or undefined in
+  // tests / degraded boots. Every call is guarded so the HUD works without it.
 
   // ---- collection PFPs -----------------------------------------------------
   // HUD fetches its OWN copy of the manifest (decoupled from the engine): the
@@ -403,6 +405,13 @@ export function initHud({ feed, battlefield, taunts }) {
     }
     renderScoreboard();
 
+    // Feed the adaptive score: violators shove the intensity up (bigger payload
+    // = bigger shove), compliant infiltrators barely register. Cheap, on-path.
+    if (music) {
+      if (spam) music.pulse(0.04 + 0.02 * Math.log10(1 + (num(verdict.dataBytes) || 0) / 100));
+      else if (verdict.archetype === 'infiltrator') music.pulse(0.008);
+    }
+
     // Occasional event-reactive banter.
     if (verdict.dataBytes > 100000) reactTaunt('bigSpam', null, 6000);
     else if (verdict.archetype === 'infiltrator') reactTaunt('infiltrator', null, 15000);
@@ -521,6 +530,11 @@ export function initHud({ feed, battlefield, taunts }) {
       else if (report.signaling) reactTaunt('signaling', ctx, 0);
       else if (isOcean(report.pool)) reactTaunt('ocean', ctx, 0);
       else reactTaunt('breach', ctx, 0);
+      // Land the matching musical stinger on the real block event.
+      if (music) music.stinger(report.pure ? 'pure'
+        : isOcean(report.pool) ? 'ocean'
+          : report.signaling ? 'signaling'
+            : 'breach');
     }
   }
 
@@ -558,6 +572,57 @@ export function initHud({ feed, battlefield, taunts }) {
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') { closeDossier(); closeModal(); }
   });
+
+  // ---- WAR DRUMS toggle ----------------------------------------------------
+  // Button + 'm' key drive music.toggle(); state persists in localStorage.
+  // Default OFF. A stored ON can't autoplay (browsers block it), so we show the
+  // ON visual and arm a one-time gesture that starts the score on first input.
+  const MUSIC_KEY = 'tbfb-music';
+  let pendingAutostart = false;
+  const musicOn = () => (music ? music.enabled : false);
+  const persistMusic = (on) => { try { localStorage.setItem(MUSIC_KEY, on ? 'on' : 'off'); } catch (_) { /* private mode */ } };
+  function syncMusicBtn() {
+    const btn = $('music-toggle');
+    if (!btn) return;
+    const on = musicOn() || pendingAutostart; // show ON while a start is pending
+    btn.textContent = on ? '♪ WAR DRUMS: ON' : '♪ WAR DRUMS: OFF';
+    btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    btn.classList.toggle('is-on', on);
+  }
+  function toggleMusic() {
+    if (!music) return;
+    pendingAutostart = false;           // an explicit toggle satisfies the arm
+    const on = music.toggle();          // gesture-safe: builds/resumes the ctx
+    persistMusic(on);
+    syncMusicBtn();
+  }
+  function armAutostart() {
+    if (!pendingAutostart || !music) return;
+    pendingAutostart = false;
+    window.removeEventListener('pointerdown', armAutostart);
+    music.setEnabled(true);
+    persistMusic(true);
+    syncMusicBtn();
+  }
+  wireClick('music-toggle', toggleMusic);
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'm' && e.key !== 'M') {
+      if (pendingAutostart) armAutostart();   // any non-'m' key also arms
+      return;
+    }
+    const t = e.target;
+    if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
+    toggleMusic();
+  });
+  {
+    let stored = 'off';
+    try { stored = localStorage.getItem(MUSIC_KEY) || 'off'; } catch (_) { /* */ }
+    if (stored === 'on' && music) {
+      pendingAutostart = true;
+      window.addEventListener('pointerdown', armAutostart);
+    }
+    syncMusicBtn();
+  }
 
   // ---- ambient rotations ---------------------------------------------------
   setTicker(pickTaunt('ambient'));

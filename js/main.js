@@ -8,6 +8,7 @@ import { Battlefield } from './battle.js';
 import * as taunts from './taunts.js';
 import { initHud } from './hud.js';
 import { initChat } from './chat.js';
+import { createWarScore } from './music.js';
 
 const canvas = document.getElementById('battlefield');
 
@@ -31,7 +32,13 @@ const battlefield = new Battlefield(canvas, {
   getTaunt: (kind, ctx) => taunts.pickTaunt(kind, ctx),
 });
 
-const hud = initHud({ feed, battlefield, taunts });
+// WAR DRUMS adaptive score. Import-safe: no AudioContext until the user
+// gestures (the toggle button / 'm' key, both wired in hud.js). window.__warscore
+// is our QA hook — leave it in; the offline preview + live toggle tests read it.
+const music = createWarScore();
+window.__warscore = music;
+
+const hud = initHud({ feed, battlefield, taunts, music });
 showDossier = hud.showDossier;
 
 // Keep the battlefield sized to its container.

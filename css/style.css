@@ -744,3 +744,15 @@ body.reduced-motion .tc-input.shake { animation: none; }
   body.chat-sheet-open .trench-chat { transform: translateY(0); }
   body.reduced-motion .trench-chat { transition: none; }
 }
+
+/* =========================================================================
+   WAR DRUMS toggle — ghost button in the header controls. OFF reads like any
+   other ghost button; ON lights the gold accent (matches the pure-gold tiles).
+   ========================================================================= */
+.music-toggle { white-space: nowrap; letter-spacing: 0.02em; }
+.music-toggle.is-on {
+  color: var(--gold);
+  border-color: var(--gold);
+  text-shadow: 0 0 6px rgba(247, 179, 43, 0.5);
+}
+.music-toggle.is-on:hover { color: var(--gold); border-color: var(--gold); }
