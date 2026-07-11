@@ -1,0 +1,167 @@
+{
+  "defenders": [
+    {
+      "name": "Luke Dashjr",
+      "handle": "@LukeDashjr",
+      "role": "The Filter Patriarch \u2014 Grandmaster of the Filter Knights",
+      "known_for": "Maintainer of Bitcoin Knots (default datacarrier filter of 42 bytes, plus toggles to reject inscriptions, BRC-20, Runes and Stamps), co-founder/CTO of the Ocean mining pool, and the man who literally registered inscriptions as a security vulnerability (CVE-2023-50428: 'datacarrier size limits can be bypassed by obfuscating data as code'). Called inscriptions a bug that Knots v25.1 'fixed,' told Runes-haters to set datacarriersize=0, and warned that Core v30's 100KB OP_RETURN default would make node operators unwitting carriers of illegal content \u2014 'any chance of Bitcoin succeeding goes out the window unless the community rejects it.'",
+      "catchphrases": [
+        "Inscriptions are EXPLOITING A VULNERABILITY!",
+        "datacarriersize=0!",
+        "Spam filters DO work \u2014 they've worked since 2013!",
+        "Fixed in Knots v25.1!",
+        "Reject v30, or Bitcoin fails!"
+      ]
+    },
+    {
+      "name": "Bitcoin Mechanic",
+      "handle": "@GrassFedBitcoin",
+      "role": "The Template Crusader \u2014 Marshal of the Ocean Host",
+      "known_for": "Co-founder and frontman of Ocean pool (launched Nov 2023 with a $6.2M Jack Dorsey-led seed round). Champion of DATUM, which lets individual miners build their own block templates, and of Ocean's multiple template policies \u2014 two of which filter inscriptions, while the Core-default option was cheekily labeled the one with the 'fewest financial transactions and most spam.' Bitcoin's most tireless podcast-debate brawler on why relay is a privilege, not a right.",
+      "catchphrases": [
+        "Nobody is ENTITLED to relay!",
+        "Miners, build your OWN templates!",
+        "It's not censorship \u2014 it's a template!",
+        "Your JPEG is not a financial transaction!",
+        "Fewest spam, most Bitcoin!"
+      ]
+    },
+    {
+      "name": "Matthew Kratter",
+      "handle": "@mattkratter",
+      "role": "The Pleb Whisperer \u2014 Herald of the Knots Migration",
+      "known_for": "Runs Bitcoin University on YouTube; became the filter camp's chief evangelist with videos like 'Bitcoin Core Has Gone Rogue' and the Bitcoin Infinity Show #203 appearance 'Bitcoin Core Has Been Compromised.' Urged plebs to stay on Core v29 or switch to Knots \u2014 a migration he cheerleads as going from ~1% to ~25% of reachable nodes in under two years \u2014 and produced 'Answering Objections to the BIP-110 Soft Fork' in defense of the anti-spam fork.",
+      "catchphrases": [
+        "Bitcoin Core has been COMPROMISED!",
+        "Stay on Core 29 \u2014 or run Knots!",
+        "The pleb migration cannot be stopped!",
+        "1% to 25% and climbing!",
+        "I have answered ALL objections!"
+      ]
+    },
+    {
+      "name": "Giacomo Zucco",
+      "handle": "@giacomozucco",
+      "role": "The Reluctant Inquisitor \u2014 Theologian of the Filter Knights",
+      "known_for": "Veteran Bitcoin maximalist theorist who argues spam is a real attack \u2014 pointing out that Satoshi himself added mempool filters and discussed spam explicitly (the famous 'Lady Gaga' exchange with Gavin Andresen) \u2014 yet broke ranks in 2026 with the take 'Bitcoin Spam is Bad. So is BIP-110,' opposing the soft fork as reckless. Self-mockingly renamed himself 'Giacomo Loathsome Bitcoin Destroyer Zucco' on X.",
+      "catchphrases": [
+        "Spam is bad. BIP-110 is ALSO bad!",
+        "Satoshi filtered spam HIMSELF!",
+        "Read the Lady Gaga thread!",
+        "Filters yes \u2014 reckless forks no!"
+      ]
+    },
+    {
+      "name": "Dathon Ohm",
+      "handle": "(pseudonymous)",
+      "role": "The Forkbringer \u2014 Author of the Doomsday Scroll (BIP-110)",
+      "known_for": "Pseudonymous author of BIP-110, the 'Reduced Data Temporary Soft Fork': a one-year consensus-level ban on the main arbitrary-data tricks (inscription envelopes, big OP_RETURNs, BRC-20-style payloads), with mandatory miner signaling at block 961632 (~Aug 7, 2026) and auto-expiry after 52,416 blocks. As of late June 2026 it commands ~0.31% of hashrate (~5 EH/s), with Ocean mining most of the signaling blocks since March.",
+      "catchphrases": [
+        "Block 961632 approaches!",
+        "One year of clean blocks!",
+        "Signal \u2014 or be signaled!",
+        "Temporary fork, eternal message!"
+      ]
+    }
+  ],
+  "kratter_confirmation": "Confirmed: the dictated \"Matthew Crater\" is Matthew R. Kratter of Bitcoin University (YouTube, @mattkratter on X). He is one of the most prominent pro-filter/pro-Knots voices of 2025\u20132026: made 'Bitcoin Core Has Gone Rogue' and appeared on the Bitcoin Infinity Show #203 as 'Bitcoin Core Has Been Compromised,' urged viewers to stay on Core v29 or migrate to Bitcoin Knots (a migration he champions as ~1% to ~25% of reachable nodes), publicly sparred with Adam Back over Core v30, and published 'Answering Objections to the BIP-110 Soft Fork' defending the anti-spam fork. No notable Bitcoin figure named 'Matthew Crater' exists; it is a dictation homophone of Kratter.",
+  "spam_factions": [
+    {
+      "name": "NodeMonkes",
+      "emoji": "\ud83d\udc12",
+      "style": "Pixelated 10k monke army in CryptoPunks formation \u2014 the disciplined vanguard of the horde",
+      "notability": "First 10k profile-picture collection fully inscribed on Bitcoin (Dec 2023); briefly the top ordinals collection by market cap, with individual monkes selling for hundreds of thousands of dollars."
+    },
+    {
+      "name": "Bitcoin Puppets",
+      "emoji": "\ud83e\udd21",
+      "style": "Deliberately terribly-drawn chaos goblins \u2014 the shrieking berserker flank",
+      "notability": "10k intentionally crude scribbles whose absurdist 'LFPUPPETS' cult flipped prestige collections in 2024, proving badly-drawn spam outbids good taste."
+    },
+    {
+      "name": "Quantum Cats",
+      "emoji": "\ud83d\udc31",
+      "style": "Schr\u00f6dinger shock-troops that exist in superposition until a Knots node observes them",
+      "notability": "Taproot Wizards' 3,333-cat collection (early 2024) honoring the proposed OP_CAT opcode, with 'evolving' artwork that updates on-chain \u2014 lobbying spam with a roadmap."
+    },
+    {
+      "name": "Taproot Wizards",
+      "emoji": "\ud83e\uddd9",
+      "style": "Robed siege engineers lobbing 4MB spellbooks over the filter walls",
+      "notability": "Udi Wertheimer and Eric Wall's revival of the 2013 'magic internet money' wizard; inscribed the ~3.96MB 'biggest block in Bitcoin history' (Feb 2023, mined with Luxor) and raised ~$30M to make Bitcoin fun/spammy again."
+    },
+    {
+      "name": "Bitcoin Frogs",
+      "emoji": "\ud83d\udc38",
+      "style": "Amphibious infantry hopping straight over the datacarrier moat",
+      "notability": "10k frogs from March 2023 that briefly out-traded every NFT collection on every chain \u2014 including Ethereum's blue chips \u2014 in daily volume."
+    },
+    {
+      "name": "Ordinal Maxi Biz (OMB)",
+      "emoji": "\ud83d\udc41\ufe0f",
+      "style": "Red-eyed cult cavalry that never blinks and never sells",
+      "notability": "ZK Shark's red-eyed PFP cult across three series; Crypto Twitter's most fanatical ordinals militia and self-declared 'ordinal maxis.'"
+    },
+    {
+      "name": "Runestone",
+      "emoji": "\ud83e\udea8",
+      "style": "Ancient siege boulder catapulted into 112,383 wallets at once",
+      "notability": "Leonidas' Runestone: the largest airdrop in Bitcoin history (112,383 wallets holding 3+ inscriptions, March 2024), delivered via one of the biggest blocks ever mined, heralding the Runes protocol."
+    },
+    {
+      "name": "Bitcoin Stamps",
+      "emoji": "\ud83d\udcee",
+      "style": "Unkillable undead unit \u2014 cannot be pruned, only endured",
+      "notability": "Mike In Space's SRC-20 protocol stuffs data into unprunable bare-multisig outputs, bloating the UTXO set forever \u2014 the one spam even other spammers call rude, and the filter camp's ultimate nightmare."
+    },
+    {
+      "name": "Rare Pepe / Counterparty",
+      "emoji": "\ud83c\udccf",
+      "style": "Elder lich commanders from the 2016 meme wars, summoned from OP_RETURN crypts",
+      "notability": "OG meme trading cards on Counterparty (2016) \u2014 the ancestors of all Bitcoin NFTs, with Sotheby's provenance and million-dollar card sales; proof the horde predates the filters."
+    },
+    {
+      "name": "BRC-20 Tokens",
+      "emoji": "\ud83d\udcc4",
+      "style": "Endless zerg swarm of JSON text files \u2014 no art, no lore, just tickers",
+      "notability": "Domo's March 2023 'experimental' standard for fungible tokens via inscribed JSON; spawned ORDI and clogged the mempool so hard in May 2023 that Binance paused BTC withdrawals twice."
+    },
+    {
+      "name": "Runes",
+      "emoji": "\u26a1",
+      "style": "The 'lawful evil' legion \u2014 spam that files its paperwork in OP_RETURN like a good citizen",
+      "notability": "Casey Rodarmor's fungible-token protocol launched at the April 2024 halving; drove block 840,000's ~37 BTC fee bonanza and lives natively in OP_RETURN \u2014 the very field Core v30 un-capped."
+    }
+  ],
+  "taunt_lines": [
+    "Policy is not consensus, Sir Knight \u2014 your mempool is a suggestion box.",
+    "datacarriersize=0? Adorable. My data identifies as program code, officer.",
+    "Core v30 raised OP_RETURN from 80 bytes to 100,000. The floodgates weren't opened \u2014 they were removed, inscribed, and sold as a collectible.",
+    "Your node, your rules. My miner, my template. My monkey, your block.",
+    "25% of nodes run Knots and 100% of my JPEGs still confirm. Filtering is a lifestyle, not a defense.",
+    "Spam filters don't work \u2014 they're just cardio for your CPU before the block arrives anyway.",
+    "CVE-2023-50428. Severity rating: hurt feelings.",
+    "Ocean filters my transaction. The next pool mines it. That's not a wall, that's a toll-free detour.",
+    "BIP-110 signaling: 0.31% of hashrate. Truly, the UASF of legends \u2014 a User Activated Strongly-worded Forum post.",
+    "A monkey JPEG just outbid your coffee payment. The free market has ruled: espresso is spam.",
+    "Knots went from 1% to 25% of nodes and the horde's confirmation time didn't move a block. Participation trophy incoming \u2014 inscribed, naturally.",
+    "Filters are security theater with worse uptime than the actors.",
+    "Satoshi put a newspaper headline in the genesis block. We're not attackers \u2014 we're apprentices.",
+    "Every sat is equal. Some sats are simply wearing wizard hats.",
+    "Your full node bravely refuses to relay my transaction... which I already handed to the miner directly. Thank you for your service.",
+    "Stamps cannot be pruned. Your grandchildren will sync my pepes.",
+    "Ocean calls the Core template the one with 'the most spam.' We call it the one with the most fees. Same chart, different cope.",
+    "Datacarrier limits are velvet ropes at a club with no walls.",
+    "First you filtered OP_RETURN, so we moved into the witness. Adapt. Inscribe. Overcome.",
+    "Chain split risk? Bold threat from a fork that can't stop a cat picture.",
+    "Block 961632, August 7th, MANDATORY signaling. Mandatory for whom, exactly? The 0.31%?",
+    "I pay 200 sat/vB for art. You pay 1 sat/vB and call yourselves the economic majority.",
+    "Core says v30 'corrects a mismatch between harmfulness and standardness.' Translation: the spam was legal the whole time.",
+    "Block 840,000 paid 37 BTC in fees for rune etchings. Your precious security budget sends its regards.",
+    "They deprecated the datacarrier option, the knights howled, and Core un-deprecated it hours before release. The filters survive \u2014 as a decorative setting.",
+    "It's not blockchain bloat. It's blockchain culture.",
+    "Run Knots, join Ocean, signal BIP-110 \u2014 my puppet still confirms in the next block. LFPUPPETS.",
+    "Two forks scheduled for August and zero JPEGs scheduled to stop. See you on both chains."
+  ],
+  "context_2026": "State of the Filter War, July 2026: Bitcoin Core v30 (released Oct 10, 2025) detonated the biggest governance fight since the 2017 scaling wars by raising the default OP_RETURN datacarrier limit from ~80/83 bytes to 100,000 bytes (PR #32406) \u2014 maintainers like Gloria Zhao argued the old limit was dead policy that pushed data into worse places (UTXO bloat, direct-to-miner deals), while Core reversed its plan to deprecate the -datacarrier/-datacarriersize config options just hours before release under community pressure. In protest, Luke Dashjr's Bitcoin Knots (42-byte default filter plus inscription/BRC-20/Runes rejection options) surged from ~1% of reachable nodes in early 2024 to ~22-25% by early 2026 (Bitbo: '25% of public node share'; one March 2026 snapshot counted ~22.4K Core v30 nodes vs ~12K Knots nodes). The 2026 flashpoints: BIP-110, pseudonymous author Dathon Ohm's 'Reduced Data Temporary Soft Fork' \u2014 a one-year consensus ban on inscription envelopes and large data payloads with mandatory miner signaling at block 961632 (~Aug 7, 2026), auto-expiring after 52,416 blocks \u2014 sits at just ~0.31% of hashrate (~5 EH/s of ~940 EH/s) as of late June, with Jack Dorsey-backed Ocean pool (~2% of hashrate, Tether hashpower aboard since April 2025) mining most signaling blocks since March 2026; a UASF wing threatens node-side enforcement around Sept 1, risking a chain split that Adam Back and Jameson Lopp call reckless, while Michael Saylor branded BIP-110 'Bitcoin's biggest self-inflicted risk.' March 2026 also saw accusations that BIP-110's ~10K signaling nodes were partly Sybil-faked. A separate Paul Sztorc eCash hard fork is also slated for August 2026, making it the most fork-threatened summer since 2017 \u2014 yet inscriptions, Runes, and Stamps keep confirming without missing a block."
+}

@@ -1,0 +1,60 @@
+{
+  "bip110_exists": true,
+  "actual_identity": "BIP 110 \u2014 \"Reduced Data Temporary Softfork\" \u2014 IS real and IS the spam-filter proposal the user means. Author: \"Dathon Ohm\" <dathonohm+bip@proton.me> (pseudonymous; the BIP's Credits section says \"Original draft and advice: Luke-Jr\", so it is squarely from the Luke Dashjr / Bitcoin Knots anti-spam camp). Layer: Consensus (soft fork). Type: Specification. Status: Complete (BIP-3 process status, advanced 2026-06-25; number assigned 2025-12-03). It is a temporary, one-year consensus soft fork with seven rules that invalidate the main arbitrary-data embedding vectors (inscription envelopes, oversized pushes/witness items, bare-multisig-style large scriptPubKeys, big OP_RETURNs, taproot annex, huge taptrees, OP_SUCCESS). Deployment: modified BIP9, name \"reduced_data\", bit 4, 55% threshold (1109/2016), starttime ~Dec 1 2025, MANDATORY signaling blocks 961,632\u2013963,647 (blocks not signaling bit 4 are rejected \u2014 URSF-style), lock-in no later than 963,648, max_activation_height 965,664 (~Sep 1 2026), active for 52,416 blocks (~1 year), then a terminal EXPIRED state. As of July 2026 it is in the STARTED signaling phase with near-zero miner signaling; Bitcoin Knots (plus Start9/Umbrel/myNode builds) ship enforcement, ~20% of listening nodes signal readiness (Lopp argues this is Sybil-inflated), and the mandatory-signaling window in August 2026 is the looming chain-split flashpoint. Note: BIP 110 shares its number slot with old 2015-era block-size BIPs (109 Andresen, 111 NODE_BLOOM) \u2014 the number was newly assigned in Dec 2025 under the BIP-3 process.",
+  "classification_rules": [
+    {
+      "rule": "Rule 1 \u2014 \"New output scriptPubKeys exceeding 34 bytes are invalid, unless the first opcode is OP_RETURN, in which case up to 83 bytes are valid.\"",
+      "detection": "For each vout: len(scriptPubKey) in bytes (hex length / 2). If first byte is 0x6a (OP_RETURN): noncompliant if total scriptPubKey > 83 bytes. Otherwise: noncompliant if > 34 bytes. Standard types all pass (P2TR/P2WSH = 34, P2PKH = 25, P2SH = 23, P2WPKH = 22, P2A = 4). This kills bare multisig data stuffing (Stamps: 1-of-3 fake-pubkey multisig \u2248 105 bytes) and uncompressed P2PK (67 bytes)."
+    },
+    {
+      "rule": "Rule 2 \u2014 \"OP_PUSHDATA* payloads and script argument witness items exceeding 256 bytes are invalid, except for the redeemScript push in BIP16 scriptSigs.\"",
+      "detection": "Two checks. (a) Parse every script that executes (scriptSig, scriptPubKey, P2SH redeemScript contents, witnessScript, tapleaf script): any OP_PUSHDATA1/2/4 payload > 256 bytes \u2192 noncompliant. Inscription envelopes push content in up-to-520-byte chunks inside the tapscript, so classic ordinals fail here too. (b) Witness stack items that are script arguments (i.e., excluding the witnessScript/tapleaf script itself, the control block, the annex, and taproot keypath signatures) > 256 bytes \u2192 noncompliant. Exemption: the redeemScript push in a P2SH scriptSig, and witness/tapleaf scripts themselves, are scripts-not-data and unlimited in size (their internal pushes are still limited)."
+    },
+    {
+      "rule": "Rule 3 \u2014 \"Spending undefined witness (or Tapleaf) versions (ie, not Witness v0/BIP 141, Taproot/BIP 341, or P2A) is invalid. (Creating outputs with undefined witness versions is still valid.)\"",
+      "detection": "For each input, inspect the prevout's scriptPubKey: allowed = v0 (OP_0 + 20-byte or 32-byte program), v1 Taproot (OP_1 + 32-byte program), and P2A (OP_1 + 2-byte program 0x4e73). Spending witness v2\u2013v16 or any other program \u2192 noncompliant. Also, in a taproot script-path spend the control block's leaf-version byte (first byte & 0xfe) must be 0xc0; any other tapleaf version \u2192 noncompliant. Requires prevout lookup (or the vin's prevout scriptPubKey if the decoder includes it)."
+    },
+    {
+      "rule": "Rule 4 \u2014 \"Witness stacks with a Taproot annex are invalid.\"",
+      "detection": "For each taproot input with \u2265 2 witness stack elements: if the last witness element's first byte is 0x50, an annex is present \u2192 noncompliant."
+    },
+    {
+      "rule": "Rule 5 \u2014 \"Taproot control blocks larger than 257 bytes (a merkle tree with 128 script leaves) are invalid.\"",
+      "detection": "In a taproot script-path spend, the control block is the last witness element (after stripping any annex). Its length is 33 + 32\u00b7m; if > 257 bytes (merkle path depth m > 7, i.e., taptree deeper than 128 leaves) \u2192 noncompliant. Flagged tradeoff: this constrains BitVM-style giant taptrees."
+    },
+    {
+      "rule": "Rule 6 \u2014 \"Tapscripts including OP_SUCCESS* opcodes anywhere (even unexecuted) are invalid.\"",
+      "detection": "In a taproot script-path spend, decode the tapleaf script (second-to-last witness element after annex removal) opcode-by-opcode; if any opcode byte is a BIP 342 OP_SUCCESSx value (80, 98, 126\u2013129, 131\u2013134, 137\u2013138, 141\u2013142, 149\u2013153, 187\u2013254) \u2192 noncompliant. Must be a real script parse \u2014 bytes inside push payloads don't count."
+    },
+    {
+      "rule": "Rule 7 \u2014 \"Tapscripts executing the OP_IF or OP_NOTIF instruction (regardless of result) are invalid.\" (The inscription-killer: targets the OP_FALSE OP_IF \u2026 OP_ENDIF envelope of CVE-2023-50428.)",
+      "detection": "In the executed tapleaf script, any OP_IF (0x63) or OP_NOTIF (0x64) opcode \u2192 noncompliant. This catches every classic ordinals/BRC-20 inscription (OP_FALSE OP_IF 'ord' \u2026 OP_ENDIF), including tiny ones that pass the 256-byte push limit. Parse as opcodes, not a substring search."
+    },
+    {
+      "rule": "Grandfathering \u2014 \"Inputs spending UTXOs that were created before the activation height are exempt from all of the new rules.\"",
+      "detection": "If the prevout was confirmed before the activation height, rules 2\u20137 don't apply to that input (rule 1 always applies to newly created outputs). For a classifier without activation context, either ignore this or take activation height as a parameter and compare against each prevout's confirmation height. Rules are checked per-block only while the deployment is ACTIVE (52,416 blocks after activation), and mandatory bit-4 signaling applies to blocks 961,632\u2013963,647."
+    }
+  ],
+  "key_quotes": [
+    "\"Yes, this proposal intentionally breaks user space, specifically the data storage user space.\" \u2014 BIP 110 text",
+    "\"Such data embedding must be resisted at all times in order to ensure it doesn't become load-bearing.\" \u2014 BIP 110 Motivation",
+    "\"The previous limit allows for 340,282,366,920,938,463,463,374,607,431,768,211,456 scripts, which is obviously way more than anyone could ever need.\" \u2014 BIP 110 Rationale",
+    "\"Users storing arbitrary data in the Bitcoin blockchain should start looking for other places to store their data, such as Nostr, IPFS, BitTorrent, cloud storage, etc.\" \u2014 BIP 110 Backwards-compatibility",
+    "\"If no further action is taken by you, it will expire in a year.\" \u2014 BIP 110 text",
+    "\"And no, it's too late to cancel BIP110.\" \u2014 Luke Dashjr",
+    "\"Fork around and find out.\" \u2014 Jameson Lopp (opposition)",
+    "\"There is nothing more permanent than a temporary solution.\" \u2014 Jameson Lopp (opposition)"
+  ],
+  "links": [
+    "https://github.com/bitcoin/bips/blob/master/bip-0110.mediawiki",
+    "https://bip110.org/",
+    "https://groups.google.com/g/bitcoindev/c/nOZim6FbuF8",
+    "https://blog.lopp.net/a-laymans-guide-to-bip-110/",
+    "https://github.com/bitcoinknots/bitcoin/compare/29.x-knots...dathonohm:bitcoin:uasf-modified-bip9",
+    "https://cointelegraph.com/news/bitcoin-nodes-run-bip-110-crosses-2",
+    "https://www.newsbtc.com/news/bitcoin-bip-110-proposal-reopens-fight-over-ordinals-and-on-chain-spam/",
+    "https://www.kucoin.com/news/flash/bitcoin-developer-refuses-to-withdraw-bip-110-sparking-debate-over-data-limits"
+  ],
+  "summary": "The user is right: BIP 110 (\"Reduced Data Temporary Softfork\", pseudonymous author Dathon Ohm, original draft by Luke-Jr) is the anti-spam camp's temporary one-year consensus soft fork, assigned Dec 2025 and now Status: Complete. It imposes seven rules on transactions in blocks while active: (1) non-OP_RETURN scriptPubKeys \u2264 34 bytes / OP_RETURN \u2264 83 bytes, (2) data pushes and script-argument witness items \u2264 256 bytes (P2SH redeemScript push exempt), (3) no spending undefined witness/tapleaf versions (only v0, Taproot, P2A), (4) no taproot annex, (5) control blocks \u2264 257 bytes (taptree \u2264 128 leaves / depth 7), (6) no OP_SUCCESSx anywhere in a tapscript, (7) no OP_IF/OP_NOTIF executed in a tapscript \u2014 the rule that nukes ordinals inscription envelopes. UTXOs created before activation are grandfathered. Deployment is a spicy modified BIP9: bit 4, only 55% threshold, mandatory signaling at blocks 961,632\u2013963,647 (non-signaling blocks rejected), forced lock-in by 963,648, activation by ~Sep 1 2026, auto-expiry after ~1 year (EXPIRED state). As of July 10 2026 it's in the signaling window with negligible miner support; Knots/Start9/Umbrel ship it, Lopp and Core-side devs call it a Sybil-backed chain-split machine, and the August 2026 mandatory-signaling window is the countdown everyone is watching. A tx is 'BIP 110 compliant' iff every output passes rule 1 and every input passes rules 2\u20137 (modulo grandfathering).",
+  "notes": "Caveats for the visualization: (a) 'Compliant vs noncompliant' is well-defined per-transaction, but consensus enforcement is per-block and only while ACTIVE \u2014 and rules 2\u20137 are waived for inputs spending pre-activation UTXOs, so a strict classifier needs activation height + prevout heights; a satirical one can just apply rules 1\u20137 flat. (b) Rule 3 and rules 4\u20137 need prevout scriptPubKeys / full witness data \u2014 use verbose getrawtransaction with prevout info. (c) Rules 6\u20137 require real opcode-level script parsing of the tapleaf; substring matching gives false positives on push payloads. (d) Fun classifier outcomes: ordinals/BRC-20 inscriptions fail rule 7 (and usually 2); Stamps bare multisig fails rule 1; big OP_RETURNs (Core v30 relaxed the datacarrier default to ~100KB, which is what provoked this war) fail rule 1's 83-byte cap; Runes' small OP_RETURNs typically PASS; plain P2WPKH/P2TR keypath payments always pass. (e) The BIP status is 'Complete' under the new BIP-3 process (spec finished, not deployed); reference implementation is a Knots-derived branch, and test vectors (bip-0110/test-vectors.json in the bips repo) exist if the user wants ground truth for the classifier. (f) News coverage attributing the proposal directly to Luke Dashjr conflates author and credited drafter \u2014 on-screen text should say 'Dathon Ohm (pseudonym), original draft: Luke-Jr'."
+}
