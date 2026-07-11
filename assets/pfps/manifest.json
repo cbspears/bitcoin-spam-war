@@ -1,0 +1,126 @@
+{
+  "collections": {
+    "nodemonkes": {
+      "name": "NodeMonkes",
+      "files": [
+        "nodemonkes/01.png",
+        "nodemonkes/02.png",
+        "nodemonkes/03.png",
+        "nodemonkes/04.png",
+        "nodemonkes/05.png",
+        "nodemonkes/06.png"
+      ],
+      "source": "On-chain ordinals inscriptions (image/png, 28x28), fetched from ordinals.com/content/<id>; IDs via Ordinals Wallet collection index (turbo.ordinalswallet.com/collection/nodemonkes). nodemonkes.com",
+      "protocols": [
+        "inscription"
+      ]
+    },
+    "puppets": {
+      "name": "Bitcoin Puppets",
+      "files": [
+        "puppets/01.png",
+        "puppets/02.png",
+        "puppets/03.png",
+        "puppets/04.png",
+        "puppets/05.png",
+        "puppets/06.png"
+      ],
+      "source": "On-chain ordinals inscriptions (image/webp), fetched from ordinals.com/content/<id>; IDs via Ordinals Wallet collection index (slug bitcoin-puppets).",
+      "protocols": [
+        "inscription"
+      ]
+    },
+    "quantumcats": {
+      "name": "Quantum Cats",
+      "files": [
+        "quantumcats/01.png",
+        "quantumcats/02.png",
+        "quantumcats/03.png",
+        "quantumcats/04.png",
+        "quantumcats/05.png"
+      ],
+      "source": "On-chain recursive HTML inscriptions (Taproot Wizards); rendered previews via renderer.magiceden.dev/v2/render?id=<id>; IDs via Ordinals Wallet collection index (slug quantum_cats). quantumcats.xyz",
+      "protocols": [
+        "inscription"
+      ]
+    },
+    "wizards": {
+      "name": "Taproot Wizards",
+      "files": [
+        "wizards/01.png",
+        "wizards/02.png",
+        "wizards/03.png",
+        "wizards/04.png",
+        "wizards/05.png"
+      ],
+      "source": "On-chain ordinals inscriptions (image/webp), fetched from ordinals.com/content/<id>; IDs via ordinals-wallet/ordinals-collections + turbo API (slug taproot-wizards). taprootwizards.com",
+      "protocols": [
+        "inscription"
+      ]
+    },
+    "frogs": {
+      "name": "Bitcoin Frogs",
+      "files": [
+        "frogs/01.png",
+        "frogs/02.png",
+        "frogs/03.png",
+        "frogs/04.png",
+        "frogs/05.png",
+        "frogs/06.png"
+      ],
+      "source": "On-chain ordinals inscriptions (image/webp), fetched from ordinals.com/content/<id>; IDs via Ordinals Wallet collection index (slug bitcoin-frogs).",
+      "protocols": [
+        "inscription"
+      ]
+    },
+    "omb": {
+      "name": "Ordinal Maxi Biz",
+      "files": [
+        "omb/01.png",
+        "omb/02.png",
+        "omb/03.png",
+        "omb/04.png",
+        "omb/05.png"
+      ],
+      "source": "On-chain ordinals inscriptions (image/webp, ZK Shark art), fetched from ordinals.com/content/<id>; IDs via Ordinals Wallet collection index (slug omb).",
+      "protocols": [
+        "inscription"
+      ]
+    },
+    "runestone": {
+      "name": "Runestone",
+      "files": [
+        "runestone/01.png"
+      ],
+      "source": "Runestone glyph render (collection icon, media.ordinalswallet.com). The artwork itself is 112,383 model/gltf+json delegate inscriptions airdropped March 2024 (e.g. bbe9772985f0e44c55fef354544779710f861046aea730c4333fe21f6f201109i956).",
+      "protocols": [
+        "runes"
+      ]
+    },
+    "stamps": {
+      "name": "Bitcoin Stamps",
+      "files": [
+        "stamps/01.png",
+        "stamps/02.png",
+        "stamps/03.png"
+      ],
+      "source": "Classic 2023 Bitcoin Stamps decoded from stampchain.io API base64 (on-chain bare-multisig data): Stamp #0 & #4 by Mike In Space, Stamp #5 by Arwyn. stampchain.io",
+      "protocols": [
+        "stamps",
+        "src20"
+      ]
+    },
+    "rarepepe": {
+      "name": "Rare Pepe",
+      "files": [
+        "rarepepe/01.png",
+        "rarepepe/02.png",
+        "rarepepe/03.png"
+      ],
+      "source": "Classic Counterparty Rare Pepe cards (2016) via tokenscan.io card images: RAREPEPE (Series 1 Card 1, the 'Nakamoto card'), PEPECASH (Series 1), FEELSGOODMAN (Matt Furie). rarepepes.com / pepe.wtf",
+      "protocols": [
+        "counterparty"
+      ]
+    }
+  }
+}

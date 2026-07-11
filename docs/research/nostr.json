@@ -1,0 +1,76 @@
+{
+ "relays_verified": [
+  {
+   "url": "wss://relay.damus.io",
+   "accepts_anon_kind42": true,
+   "read_ok": true,
+   "latency_ms": 481,
+   "notes": "Accepts anon kind 1, 40, 42 (OK:true, empty msg). Read-back of kind 42 via fresh REQ confirmed. GOTCHA: intermittently returns HTTP 503 at the WebSocket upgrade under load (hit once, worked on retry ~10s later) \u2014 client needs reconnect with backoff. connect=1060ms, publish->OK=481ms, REQ->EVENT=523ms."
+  },
+  {
+   "url": "wss://relay.primal.net",
+   "accepts_anon_kind42": true,
+   "read_ok": true,
+   "latency_ms": 143,
+   "notes": "Cleanest relay of the survey. Accepts anon kind 1, 40, 42; instant read-back on fresh REQ. connect=642ms, publish->OK=143ms, REQ->EVENT=143ms. Primary recommendation."
+  },
+  {
+   "url": "wss://nostr.mom",
+   "accepts_anon_kind42": false,
+   "read_ok": true,
+   "latency_ms": 156,
+   "notes": "SHADOW ACCEPT \u2014 returns [\"OK\",id,true,\"\"] for anon kind 42 but the event is silently dropped: not retrievable by id, author, or #e (verified twice with two different keys). Kind 1 and kind 40 ARE stored and served. Do NOT count its OK:true toward kind-42 durability. connect=626ms, publish->OK=156ms."
+  },
+  {
+   "url": "wss://nos.lol",
+   "accepts_anon_kind42": false,
+   "read_ok": true,
+   "latency_ms": 190,
+   "notes": "Accepts anon kind 1 and kind 40 (stored + served), but rejects anon kind 42 with [\"OK\",id,false,\"not acceptable at this point (8)\"] \u2014 consistent across brand-new and previously-seen pubkeys (strfry write-policy plugin). Usable as a read/backup relay for kind 40, useless for chat messages. connect=681ms, publish->OK=190ms."
+  },
+  {
+   "url": "wss://offchain.pub",
+   "accepts_anon_kind42": false,
+   "read_ok": true,
+   "latency_ms": 60,
+   "notes": "Fastest connect (312ms) and accepts anon kind 1 + kind 40, but rejects anon kind 42 with [\"OK\",id,false,\"Policy violated and pubkey is not in our web of trust.\"] \u2014 explicit WoT gate on chat kinds, regardless of key history."
+  },
+  {
+   "url": "wss://relay.nostr.band",
+   "accepts_anon_kind42": false,
+   "read_ok": false,
+   "notes": "UNREACHABLE \u2014 WebSocket opening handshake timed out on two separate attempts (15-20s). Excluded entirely."
+  },
+  {
+   "url": "wss://nostr.wine",
+   "accepts_anon_kind42": false,
+   "read_ok": false,
+   "notes": "HTTP 403 at the WebSocket upgrade itself \u2014 paid/NIP-42-auth relay, rejects anonymous connections before any Nostr frame is exchanged. Excluded (as anticipated in the task)."
+  }
+ ],
+ "channel_id": "e7896af04cf2fcdea9b209f801547f1ff529c73eb24c760855889bcdda481aa5",
+ "channel_event_json": "{\"pubkey\":\"c09b50ed1daa810a796c1a8c6a7bdfafef212bead31ca4d7bae920ff2a46de1e\",\"created_at\":1783770003,\"kind\":40,\"tags\":[],\"content\":\"{\\\"name\\\":\\\"Trench Chat \u2014 The Battle for Blockspace\\\",\\\"about\\\":\\\"Live chat of https://bitcoin-spam-war.vercel.app \u2014 BIP-110 said move your data to Nostr, so we did.\\\",\\\"picture\\\":\\\"\\\"}\",\"id\":\"e7896af04cf2fcdea9b209f801547f1ff529c73eb24c760855889bcdda481aa5\",\"sig\":\"d69e219ac4d1457a526026f37826ee25780569d7671cd58a395919dbbefeb89b2a84dad6905757e07046bb65bbe537eade4100ffb27494d4acf3da814f0be760\"}",
+ "burner_pubkey": "c09b50ed1daa810a796c1a8c6a7bdfafef212bead31ca4d7bae920ff2a46de1e",
+ "crypto_bundle_path": "/home/cbspears/Projects/bitcoin-spam-war/js/vendor/nostr-crypto.js",
+ "bundle_bytes": 30587,
+ "bundle_api": "EXPORTS (exact, ESM named): schnorrSign(msgHash32: Uint8Array(32), privKey32: Uint8Array(32)) -> Uint8Array(64) [BIP-340]; schnorrVerify(sig: Uint8Array(64), msgHash32: Uint8Array(32), pubKeyX32: Uint8Array(32)) -> boolean (never throws, returns false on malformed input); getPublicKeyX(privKey32) -> Uint8Array(32) x-only pubkey; sha256(bytes: Uint8Array) -> Uint8Array(32); randomPrivateKey() -> Uint8Array(32) (rejection-sampled valid secp256k1 scalar via crypto.getRandomValues); bytesToHex(Uint8Array) -> lowercase hex string; hexToBytes(string) -> Uint8Array. Built from @noble/curves@2.2.0 + @noble/hashes@2.2.0 with `npx esbuild entry.js --bundle --minify --format=esm` (entry source: nostr-lab/entry.js). Requires globalThis.crypto \u2014 present in every browser; in Node 18 tests needs --experimental-global-webcrypto.\n\nBUILD+SIGN A NOSTR EVENT:\nimport { schnorrSign, getPublicKeyX, sha256, randomPrivateKey, bytesToHex, hexToBytes } from './vendor/nostr-crypto.js';\nconst enc = new TextEncoder();\nconst sk = randomPrivateKey();                       // or persisted burner from localStorage\nconst ev = { pubkey: bytesToHex(getPublicKeyX(sk)), created_at: Math.floor(Date.now()/1000), kind: 42, tags: [[\"e\", CHANNEL_ID, \"wss://relay.damus.io\", \"root\"]], content: text };\nconst idBytes = sha256(enc.encode(JSON.stringify([0, ev.pubkey, ev.created_at, ev.kind, ev.tags, ev.content])));\nev.id  = bytesToHex(idBytes);\nev.sig = bytesToHex(schnorrSign(idBytes, sk));\nws.send(JSON.stringify([\"EVENT\", ev]));\n\nVERIFY AN INCOMING EVENT:\nconst idBytes = sha256(enc.encode(JSON.stringify([0, e.pubkey, e.created_at, e.kind, e.tags, e.content])));\nconst valid = bytesToHex(idBytes) === e.id && schnorrVerify(hexToBytes(e.sig), idBytes, hexToBytes(e.pubkey));\n\nEVENT-ID SERIALIZATION RULES (NIP-01, verified byte-for-byte against nostr-tools): id = sha256 over the UTF-8 BYTES (TextEncoder, never UTF-16) of the JSON serialization of the 6-element array [0, pubkey_lowercase_hex, created_at_integer, kind_integer, tags, content]. Native JSON.stringify matches NIP-01 escaping exactly: ONLY double-quote (\\\"), backslash (\\\\), and control chars < 0x20 are escaped (\\n, \\t, \\r as two-char forms; other controls as \\\\uXXXX); all other characters \u2014 accented latin, CJK, emoji incl. surrogate pairs \u2014 pass through RAW as UTF-8, NOT \\\\uXXXX-escaped. No whitespace between elements. NEVER hand-concatenate the serialization; JSON.stringify on the array is the spec. Verified: bundle-signed events with content 'unicode \u2713 \u4e2d\u6587 emoji \ud83e\udd20 newline\\\\nquote\\\"backslash\\\\\\\\ tab\\\\t' pass nostr-tools verifyEvent, and the bundle recomputes nostr-tools-generated ids exactly (12/12 tests PASS in nostr-lab/test-bundle.mjs).",
+ "roundtrip_proven": true,
+ "wire_examples": "ALL FRAMES BELOW ARE VERBATIM CAPTURES from roundtrip.mjs (plain ws + vendored bundle only, no nostr-tools).\n\n1) NIP-01 ID SERIALIZATION of the kind-42 (sha256 of these exact UTF-8 bytes = event id):\n[0,\"7f535d27878a871245a8a5eb847a68a446a86937bacf3a135aae9e4a0653e435\",1783770038,42,[[\"e\",\"e7896af04cf2fcdea9b209f801547f1ff529c73eb24c760855889bcdda481aa5\",\"wss://relay.damus.io\",\"root\"]],\"hello from the trench\"]\n\n2) EVENT PUBLISH (sent to all 5 verified relays):\n[\"EVENT\",{\"pubkey\":\"7f535d27878a871245a8a5eb847a68a446a86937bacf3a135aae9e4a0653e435\",\"created_at\":1783770038,\"kind\":42,\"tags\":[[\"e\",\"e7896af04cf2fcdea9b209f801547f1ff529c73eb24c760855889bcdda481aa5\",\"wss://relay.damus.io\",\"root\"]],\"content\":\"hello from the trench\",\"id\":\"a05fee3a3035232f63484638edc64fa9a7c8fc3a48f87dd89c2c712864ed1f73\",\"sig\":\"c51b4051e78ae48a7158e46983be3c198e416f4b25321a23361c5b3c2b5488cfe57b263dab2353c75300ff58e7fc91ed95657a8f14f2069815e6306d45e541a7\"}]\n\n3) OK RESPONSES (received):\nwss://relay.damus.io   -> [\"OK\",\"a05fee3a3035232f63484638edc64fa9a7c8fc3a48f87dd89c2c712864ed1f73\",true,\"\"]\nwss://relay.primal.net -> [\"OK\",\"a05fee3a3035232f63484638edc64fa9a7c8fc3a48f87dd89c2c712864ed1f73\",true,\"\"]\nwss://nostr.mom        -> [\"OK\",\"a05fee3a3035232f63484638edc64fa9a7c8fc3a48f87dd89c2c712864ed1f73\",true,\"\"]  (SHADOW ACCEPT \u2014 never served back)\nwss://nos.lol          -> [\"OK\",\"a05fee3a3035232f63484638edc64fa9a7c8fc3a48f87dd89c2c712864ed1f73\",false,\"not acceptable at this point (8)\"]\nwss://offchain.pub     -> [\"OK\",\"a05fee3a3035232f63484638edc64fa9a7c8fc3a48f87dd89c2c712864ed1f73\",false,\"Policy violated and pubkey is not in our web of trust.\"]\n=> OK:true from 3 relays (>=2 required: PASS)\n\n4) FRESH-SOCKET REQ (sent on brand-new connections):\n[\"REQ\",\"trench-read\",{\"kinds\":[42],\"#e\":[\"e7896af04cf2fcdea9b209f801547f1ff529c73eb24c760855889bcdda481aa5\"],\"limit\":10}]\n\n5) EVENT DELIVERY + EOSE (received on the fresh socket, wss://relay.primal.net):\n[\"EVENT\",\"trench-read\",{\"content\":\"hello from the trench\",\"created_at\":1783770038,\"id\":\"a05fee3a3035232f63484638edc64fa9a7c8fc3a48f87dd89c2c712864ed1f73\",\"kind\":42,\"pubkey\":\"7f535d27878a871245a8a5eb847a68a446a86937bacf3a135aae9e4a0653e435\",\"sig\":\"c51b4051e78ae48a7158e46983be3c198e416f4b25321a23361c5b3c2b5488cfe57b263dab2353c75300ff58e7fc91ed95657a8f14f2069815e6306d45e541a7\",\"tags\":[[\"e\",\"e7896af04cf2fcdea9b209f801547f1ff529c73eb24c760855889bcdda481aa5\",\"wss://relay.damus.io\",\"root\"]]}]\n[\"EOSE\",\"trench-read\"]\n(wss://relay.damus.io returned HTTP 503 at the WS upgrade on this first fresh attempt; re-run ~10s later on another fresh socket returned the same EVENT + EOSE \u2014 so fresh-REQ read-back confirmed on BOTH damus and primal. A second kind-42 published later read back on both as [\"msg2\",\"msg1\"] \u2014 newest-first ordering.)",
+ "gotchas": [
+  "OK:true is NOT durability. wss://nostr.mom ACKed anonymous kind-42 with [\"OK\",id,true,\"\"] then silently dropped it \u2014 unreachable by id, author, or #e query minutes later (reproduced with two different keys). The site must count a relay as 'delivered' only if the event later appears in a REQ, or simply only trust relays empirically proven to serve kind 42 (damus + primal).",
+  "Relay policy is PER-KIND: nos.lol and offchain.pub happily accept anonymous kind 1 (probe stored + served) but reject anonymous kind 42 \u2014 nos.lol: 'not acceptable at this point (8)', offchain.pub: 'Policy violated and pubkey is not in our web of trust.' Both rejections are stable across brand-new and previously-seen pubkeys. Never generalize a kind-1 survey to chat kinds.",
+  "Only 2 of 7 candidate relays (relay.damus.io, relay.primal.net) both accept AND serve anonymous kind 42. Publish chat messages to those two plus nostr.mom (free extra copy of kind 40/1, zero-cost lottery ticket for 42), read from damus + primal. Total redundancy for chat messages is 2 \u2014 the UI should tolerate one being down.",
+  "Reconnect etiquette: damus intermittently refuses the WebSocket upgrade with HTTP 503 (load shedding) \u2014 the browser fires a bare 'error'+'close'. Reconnect with exponential backoff + jitter (e.g. 1s,2s,4s..30s cap); a retry ~10s later succeeded. relay.nostr.band never completed a handshake from this network; nostr.wine 403s anonymous connections at HTTP level (paid/NIP-42) \u2014 drop both.",
+  "Dedupe by event id across relays: the same event arrives once per relay you're subscribed to; keep a Set of seen ids before rendering. Sharp edge observed: two INDEPENDENTLY signed events collided to the SAME id because pubkey/kind/tags/content matched and created_at fell in the same second (ids are deterministic; only sigs differed) \u2014 id-dedupe handles this correctly, just don't key UI state on sig.",
+  "EOSE semantics: every surveyed relay sends [\"EOSE\",subid] after replaying stored events; live events continue on the same subscription afterward. Use EOSE to (a) stop the loading spinner, (b) switch from batch-insert to append mode. Don't wait for EOSE from ALL relays \u2014 one is enough; others may be slow or return nothing.",
+  "Ordering: limit-bounded REQs return stored events NEWEST-FIRST (observed on damus and primal: [msg2,msg1]). Re-sort ascending by created_at client-side, tiebreak by id (created_at has 1s resolution, ties are routine in a live chat).",
+  "created_at freshness: use Math.floor(Date.now()/1000). Relays enforce skew windows (typically reject >~15 min future / very old past). A visitor with a wrong system clock will get OK:false or silent drops \u2014 if publishes fail on all relays, surface a 'check your clock' hint. Also never send float timestamps: the id serialization would differ between signer and verifier.",
+  "OK vs NOTICE vs AUTH: [\"OK\",event_id,bool,message] is the per-EVENT ack \u2014 match on event id, treat missing OK after ~10s as failure (timeout observed nowhere on healthy relays; publish->OK was 60-481ms). [\"NOTICE\",msg] is connection-level free text, never an ack \u2014 log it, don't parse it. [\"AUTH\",challenge] (NIP-42) may arrive unsolicited; anonymous chat ignores it (auth relays were excluded).",
+  "NIP-01 id serialization sharp edges: hash the UTF-8 BYTES (TextEncoder) of JSON.stringify([0,pubkey,created_at,kind,tags,content]). JS JSON.stringify natively produces NIP-01-compliant escaping: only \", \\, and control chars <0x20 escaped (\\n stays the two-char sequence backslash-n; emoji/CJK/accents stay RAW UTF-8, never \\uXXXX). pubkey must be lowercase hex. Verified byte-exact against nostr-tools both directions incl. content with newlines, quotes, backslashes, tabs, \u2713, \u4e2d\u6587, and surrogate-pair emoji.",
+  "Rate limits: none triggered at survey pace (single events, seconds apart). nos.lol's '(8)' is a policy-plugin code, not rate limiting. Do not blind-retry an OK:false \u2014 the same event will be rejected again; only retry transport failures. Site should throttle sends client-side (e.g. 1 msg/2s) to stay under strfry per-IP burst limits.",
+  "Max content length: untested at the limit (chat probes were short); typical relay caps are on total event JSON (~64-100KB strfry default). Cap chat input at ~1000 chars \u2014 far below any relay limit and right for UX.",
+  "Subscriptions: use unique REQ subscription ids per purpose, CLOSE ones you're done with ([\"CLOSE\",subid]); relays cap concurrent subs per connection. One long-lived sub {kinds:[42],\"#e\":[CHANNEL_ID],limit:50} is all the chat needs.",
+  "Bundle env note: nostr-crypto.js needs globalThis.crypto (all browsers have it; Node 18 lab tests need --experimental-global-webcrypto). randomPrivateKey() throws without it \u2014 fine for the site, relevant only to Node-based CI.",
+  "Channel provenance: kind-40 creator burner privkey is preserved at nostr-lab/channel.json (burner_privkey_hex) in scratch ONLY \u2014 if you ever want to publish a kind-41 channel-metadata update it must be signed by that key. If scratch is wiped, the channel metadata is frozen forever (fine for this joke; the channel id keeps working regardless)."
+ ]
+}

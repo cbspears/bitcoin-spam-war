@@ -1,0 +1,128 @@
+{
+ "collections": [
+  {
+   "name": "NodeMonkes",
+   "files": [
+    "nodemonkes/01.png",
+    "nodemonkes/02.png",
+    "nodemonkes/03.png",
+    "nodemonkes/04.png",
+    "nodemonkes/05.png",
+    "nodemonkes/06.png"
+   ],
+   "source": "Raw on-chain inscriptions via https://ordinals.com/content/<id>; IDs from Ordinals Wallet collection index (turbo.ordinalswallet.com/collection/nodemonkes). Per-file inscription IDs in assets/pfps/sources.json (e.g. 8aaead6a44e1f7514375292545dc39a728b05d8956c523545c8ca9792adf167ci0 = nodemonke 7548).",
+   "style_notes": "Native 28x28 image/png pixel art; upscaled with -sample (nearest neighbor) to stay crisp."
+  },
+  {
+   "name": "Bitcoin Puppets",
+   "files": [
+    "puppets/01.png",
+    "puppets/02.png",
+    "puppets/03.png",
+    "puppets/04.png",
+    "puppets/05.png",
+    "puppets/06.png"
+   ],
+   "source": "Raw on-chain inscriptions via ordinals.com/content/<id>; IDs from Ordinals Wallet index (slug bitcoin-puppets), e.g. b0fbe7fd1e77ef56217c7f27460101bf480fe277b7d3545fd409d3cb243f669di0 = Bitcoin Puppet #5389. Full list in sources.json.",
+   "style_notes": "image/webp illustrated crayon style; lanczos resize."
+  },
+  {
+   "name": "Quantum Cats",
+   "files": [
+    "quantumcats/01.png",
+    "quantumcats/02.png",
+    "quantumcats/03.png",
+    "quantumcats/04.png",
+    "quantumcats/05.png"
+   ],
+   "source": "On-chain recursive HTML inscriptions (text/html) \u2014 not directly imageable; rendered previews fetched from renderer.magiceden.dev/v2/render?id=<id>. IDs from Ordinals Wallet index (slug quantum_cats), incl. cat0000 = 4b31771df21656d2a77e6fa18720a6dd94b04510b9065a7c67250d5c89ad2079i0.",
+   "style_notes": "Psychedelic illustrated cats (Taproot Wizards project); 400x400 JPEG renders, lanczos resize."
+  },
+  {
+   "name": "Taproot Wizards",
+   "files": [
+    "wizards/01.png",
+    "wizards/02.png",
+    "wizards/03.png",
+    "wizards/04.png",
+    "wizards/05.png"
+   ],
+   "source": "Raw on-chain inscriptions via ordinals.com/content/<id>; IDs from ordinals-wallet/ordinals-collections + turbo API (slug taproot-wizards), e.g. 0f35c3fa8e1d7b31158d2e5ddb399af2b67c9e4571f966fee56aaef7b7010b00i0 = Wizard #0126.",
+   "style_notes": "MS-Paint orange-robed wizards, image/webp ~800px; lanczos resize."
+  },
+  {
+   "name": "Bitcoin Frogs",
+   "files": [
+    "frogs/01.png",
+    "frogs/02.png",
+    "frogs/03.png",
+    "frogs/04.png",
+    "frogs/05.png",
+    "frogs/06.png"
+   ],
+   "source": "Raw on-chain inscriptions via ordinals.com/content/<id>; IDs from Ordinals Wallet index (slug bitcoin-frogs), e.g. abca5d65c032e2c76fd41cb1c7375e5b86e0e2a3e7d575b950792fdc4256fd9bi0 = Bitcoin Frog #7370.",
+   "style_notes": "Cartoon frogs, image/webp 576x576; lanczos resize."
+  },
+  {
+   "name": "Ordinal Maxi Biz (OMB)",
+   "files": [
+    "omb/01.png",
+    "omb/02.png",
+    "omb/03.png",
+    "omb/04.png",
+    "omb/05.png"
+   ],
+   "source": "Raw on-chain inscriptions via ordinals.com/content/<id>; IDs from Ordinals Wallet index (slug omb), e.g. 55edee9c99d532a3e2da238241f2c2e6848f349d7db15394cc29e0c73b6a2124i0.",
+   "style_notes": "ZK Shark black-and-white sketch faces with glowing red/green eyes; image/webp 336x336, lanczos."
+  },
+  {
+   "name": "Runestone",
+   "files": [
+    "runestone/01.png"
+   ],
+   "source": "Runestone glyph render (Ordinals Wallet collection icon, media.ordinalswallet.com/693b679f...png). The artwork on-chain is 112,383 model/gltf+json delegate inscriptions (sample: bbe9772985f0e44c55fef354544779710f861046aea730c4333fe21f6f201109i956) \u2014 GLTF is not directly renderable to PNG headlessly here, so the flat rune glyph is used (1 piece, as allowed).",
+   "style_notes": "Black square with white rune glyph \u2014 reads clean at 64px. Mapped to protocol 'runes' (Runestone Siege faction)."
+  },
+  {
+   "name": "Bitcoin Stamps",
+   "files": [
+    "stamps/01.png",
+    "stamps/02.png",
+    "stamps/03.png"
+   ],
+   "source": "Decoded from stamp_base64 in stampchain.io API (on-chain bare-multisig data): Stamp #0 (Mike In Space, tx 17686488353b65b128d19031240478ba50f1387d0ea7e5f188ea7fda78ea06f4, the first stamp, 5x5px), Stamp #4 (Mike In Space, tx 02e522afc3244a5029747fa37e6b451bce735565cbbb37a50a97ec9d87f7c96e), Stamp #5 (Arwyn, tx ddca4f5b61445fa52af02b3bb7dab259add31f40deb550da4e53c82bc21f19d6).",
+   "style_notes": "Classic March-2023 pixel stamps (5x5 and 24x24); -sample nearest-neighbor upscale. Mapped to protocols 'stamps' + 'src20'."
+  },
+  {
+   "name": "Rare Pepe",
+   "files": [
+    "rarepepe/01.png",
+    "rarepepe/02.png",
+    "rarepepe/03.png"
+   ],
+   "source": "Counterparty card images via tokenscan.io (xchain.io successor): RAREPEPE (Series 1 Card 1 \u2014 the famous 'Nakamoto card' with Dorian Nakamoto pepe portrait; the separate NAKAMOTO asset is unrelated), PEPECASH (Series 1), FEELSGOODMAN (Matt Furie's card). URLs: tokenscan.io/img/cards/{RAREPEPE.jpg,PEPECASH.png,FEELSGOODMAN.png}.",
+   "style_notes": "Full trading-card art, portrait aspect padded to square with transparency; lanczos. Mapped to protocol 'counterparty'."
+  }
+ ],
+ "total_bytes": 214138,
+ "manifest_path": "/home/cbspears/Projects/bitcoin-spam-war/assets/pfps/manifest.json",
+ "attribution_lines": [
+  "NodeMonkes \u2014 on-chain inscriptions (ordinals.com), nodemonkes.com",
+  "Bitcoin Puppets \u2014 on-chain inscriptions (ordinals.com)",
+  "Quantum Cats \u2014 Taproot Wizards; recursive on-chain inscriptions, previews rendered by Magic Eden (renderer.magiceden.dev), quantumcats.xyz",
+  "Taproot Wizards \u2014 on-chain inscriptions (ordinals.com), taprootwizards.com",
+  "Bitcoin Frogs \u2014 on-chain inscriptions (ordinals.com)",
+  "Ordinal Maxi Biz \u2014 art by ZK Shark, on-chain inscriptions (ordinals.com)",
+  "Runestone \u2014 Leonidas; 112,383-wallet airdrop, March 2024; glyph render courtesy Ordinals Wallet",
+  "Bitcoin Stamps \u2014 Stamps #0, #4, #5 by Mike In Space & Arwyn (2023), decoded from on-chain data via stampchain.io",
+  "Rare Pepe \u2014 Counterparty cards (2016): RAREPEPE ('Nakamoto card'), PEPECASH, FEELSGOODMAN (Matt Furie); images via tokenscan.io, rarepepes.com",
+  "Collection indexes courtesy Ordinals Wallet (turbo API). All art belongs to its creators/holders; used here as tiny sprites in a non-commercial parody visualization."
+ ],
+ "failures": [
+  "Magic Eden public API (api-mainnet.magiceden.dev) is down/blocked ('no healthy upstream') \u2014 worked around with Ordinals Wallet turbo API, which served full inscription-ID lists for all 7 ordinals collections.",
+  "Runestone's on-chain artwork is model/gltf+json (3D); Magic Eden's renderer rejects it ('Invalid inscription'), so no 3D-rock render was obtainable headlessly \u2014 used the flat rune-glyph collection icon instead (task allowed 1-2 pieces).",
+  "Legacy Rare Pepe image hosts are dead: rarepepewallet.com/feed 404s, xchain.io/img/cards 404s, rarepepedirectory.com has broken TLS (curl exit 60) \u2014 tokenscan.io card images used instead.",
+  "Counterparty asset named 'NAKAMOTO' turned out to be a different artwork ('The Dude'), not the famous card; the famous Series 1 Card 1 'Nakamoto card' is the asset RAREPEPE, which IS included as rarepepe/01.png.",
+  "ordinals-wallet/ordinals-collections GitHub repo predates NodeMonkes/Puppets/Quantum Cats/Runestone (404s for those slugs) \u2014 only used as cross-check for wizards/frogs/omb."
+ ]
+}
