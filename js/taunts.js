@@ -20,7 +20,7 @@ export const TAUNTS = {
     'Datacarrier limits are velvet ropes at a club with no walls.',
     "It's not blockchain bloat. It's blockchain culture.",
     'Satoshi put a headline in the genesis block. We are apprentices, not attackers.',
-    '25% of nodes run Knots and 100% of my JPEGs still confirm. Filtering is a lifestyle.',
+    '25% of nodes run Knots and 100% of my JPEGs still confirm. Filters vote; miners decide.',
     'First you filtered OP_RETURN, so we moved into the witness. Adapt. Inscribe. Overcome.',
     "Chain split risk? Bold threat from a fork that can't stop a cat picture.",
     'Core un-capped OP_RETURN to 100,000 bytes. The floodgates were removed and sold as a collectible.',

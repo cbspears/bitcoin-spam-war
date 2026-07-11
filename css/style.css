@@ -170,6 +170,7 @@ body.reduced-motion .doomsday-bar-fill { transition: none; }
   padding: 14px 20px;
 }
 .tile {
+  position: relative;
   background: var(--bg-2);
   border: 1px solid var(--line);
   border-left-width: 3px;
@@ -199,6 +200,82 @@ body.reduced-motion .doomsday-bar-fill { transition: none; }
 .tile-pure .tile-num { color: var(--gold); }
 .tile-gag { border-left-color: var(--red); }
 .tile-gag .tile-num { color: var(--red); }
+
+/* Per-tile "?" help affordance: pure-CSS tooltip via attr(data-tip), no JS.
+   Keyboard/tap accessible because it's a real <button>. */
+.tile-help {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: var(--bg-3);
+  color: var(--ink-dim);
+  font-family: var(--mono);
+  font-size: 10px;
+  line-height: 14px;
+  text-align: center;
+  cursor: help;
+  opacity: 0.55;
+  transition: opacity 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+.tile-help:hover,
+.tile-help:focus-visible {
+  opacity: 1;
+  color: var(--ink);
+  border-color: var(--steel);
+  outline: none;
+}
+.tile-help::before,
+.tile-help::after {
+  content: '';
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.12s ease;
+  pointer-events: none;
+}
+.tile-help::after {
+  content: attr(data-tip);
+  width: max-content;
+  max-width: 260px;
+  white-space: normal;
+  background: var(--bg-3);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 8px 10px;
+  font-size: 11px;
+  line-height: 1.4;
+  color: var(--ink);
+  text-transform: none;
+  letter-spacing: normal;
+  font-weight: 400;
+  z-index: 20;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+}
+.tile-help::before {
+  top: calc(100% + 1px);
+  right: 4px;
+  width: 8px;
+  height: 8px;
+  background: var(--bg-3);
+  border-left: 1px solid var(--line);
+  border-top: 1px solid var(--line);
+  transform: rotate(45deg);
+  z-index: 21;
+}
+.tile-help:hover::before,
+.tile-help:hover::after,
+.tile-help:focus-visible::before,
+.tile-help:focus-visible::after {
+  opacity: 1;
+  visibility: visible;
+}
 
 /* ---------- stage: battlefield + kill feed ---------- */
 .stage {

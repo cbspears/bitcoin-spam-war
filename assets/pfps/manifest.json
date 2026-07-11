@@ -121,6 +121,21 @@
       "protocols": [
         "counterparty"
       ]
+    },
+    "ordwizards": {
+      "name": "Wizards of Ord",
+      "files": [
+        "ordwizards/01.png",
+        "ordwizards/02.png",
+        "ordwizards/03.png",
+        "ordwizards/04.png",
+        "ordwizards/05.png",
+        "ordwizards/06.png"
+      ],
+      "source": "On-chain ordinals inscriptions (image/webp, 55x55 pixel art), fetched from ordinals.com/content/<id>; IDs via Ordinals Wallet turbo API collection index (slug 'wizards' = The Wizards of Ord, 3,333 wizards on block-78 sats; distinct from Taproot Wizards). gallery.wizards.art / @TheWizardsOfOrd",
+      "protocols": [
+        "inscription"
+      ]
     }
   }
 }

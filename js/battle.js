@@ -38,6 +38,24 @@ const C = {
   green: '#3ddc84',
   purple: '#b06bff',
 };
+const MONO = 'ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace'; // duplicated from sprites.js on purpose
+
+// Pixel-ish mocking floater for a bounced filter shot — magenta and a hair
+// smaller than the orange 'POLICY ≠ CONSENSUS' ding (drawDing in sprites.js)
+// so the two read as different voices: referee call vs. crowd heckle.
+function drawQuip(ctx, x, y, text, alpha) {
+  ctx.save();
+  ctx.globalAlpha = Math.max(0, Math.min(1, alpha));
+  ctx.font = `800 9px ${MONO}`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.lineWidth = 3;
+  ctx.strokeStyle = 'rgba(0,0,0,0.7)';
+  ctx.strokeText(text, x, y);
+  ctx.fillStyle = C.magenta;
+  ctx.fillText(text, x, y);
+  ctx.restore();
+}
 
 // ---- tunables --------------------------------------------------------------
 const CAP_UNITS = 150;          // mosh-pit soft cap; oldest loiterers fade out
@@ -79,6 +97,14 @@ const SPAM_LINES = [
 const FUME_LINES = ['COMPLIANT?! It files paperwork in OP_RETURN!', 'A small runestone... regrettably legal.', 'This is lawful evil and you know it.', 'Wave it through. WAVE. IT. THROUGH.'];
 const BREACH_LINES = ['They got in again.', 'Hold the line! ...it did not hold.', 'Next block, surely.'];
 const CELEBRATE_LINES = ['We did it! A clean block!', 'The filters HELD!', 'Screenshot this one, plebs.'];
+// mocking floaters popped when a filter shot bounces harmlessly off a violator
+const QUIP_LINES = [
+  'INEFFECTIVE', 'SPAM TOO STRONG', '0 DMG', 'IT DOES NOTHING', 'FILTER RESISTED',
+  'ABSORBED', 'JPEG ARMOR HOLDS', 'REJECTED BY REALITY', 'IMMUNE',
+  'datacarrier says no', 'NICE POLICY', 'STILL CONFIRMING',
+];
+const QUIP_COOLDOWN = 1.2; // seconds between quips, so heavy fire doesn't wallpaper the screen
+const QUIP_BIG_SIZE = 48;  // units bigger than this (large inscriptions) always quip when off cooldown
 
 // ---- tiny pure helpers -----------------------------------------------------
 const clamp = (v, lo, hi) => (v < lo ? lo : v > hi ? hi : v);
@@ -164,6 +190,8 @@ export class Battlefield {
     this._deadUnits = [];
     this._z = [];               // reused z-order index buffer
     this.bubbles = [];
+    this._quipCooldown = 0;  // seconds left before another bounce-quip may fire
+    this._lastQuip = null;   // avoid repeating the same quip back-to-back
     this.scorches = [];
     this.breachQueue = [];
 
@@ -743,6 +771,7 @@ export class Battlefield {
   }
 
   updateShots(dt) {
+    if (this._quipCooldown > 0) this._quipCooldown -= dt;
     for (const s of this.shots) {
       if (!s.active) continue;
       s.life -= dt;
@@ -760,7 +789,16 @@ export class Battlefield {
             s.vy = (ny / nl) * 160 - rand(60, 140);
             s.bounced = true;
             s.life = Math.min(s.life, 0.55);
-            if (Math.random() < 0.22) this.addDing(u.x, u.y - u.size * 0.6);
+            // filters bounce off, mocking quip takes priority over the ding —
+            // big units (large inscriptions) always get one when off cooldown
+            let quipped = false;
+            if (this._quipCooldown <= 0 && (u.size > QUIP_BIG_SIZE || Math.random() < 0.45)) {
+              this.addQuip(u.x, u.y - u.size * 0.6);
+              this._quipCooldown = QUIP_COOLDOWN;
+              quipped = true;
+            }
+            if (quipped) this.burst(s.x, s.y, 3, 'ember', [s.hue]);
+            else if (Math.random() < 0.22) this.addDing(u.x, u.y - u.size * 0.6);
             else this.burst(s.x, s.y, 3, 'ember', [s.hue]);
             break;
           }
@@ -832,6 +870,14 @@ export class Battlefield {
 
   addDing(x, y) {
     this.bubbles.push({ x, y, text: 'POLICY ≠ CONSENSUS', color: C.orange, age: 0, ttl: 1.1, drift: 26, ding: true });
+    while (this.bubbles.length > CAP_BUBBLES) this.bubbles.shift();
+  }
+
+  addQuip(x, y) {
+    let text = pick(QUIP_LINES);
+    if (QUIP_LINES.length > 1) while (text === this._lastQuip) text = pick(QUIP_LINES);
+    this._lastQuip = text;
+    this.bubbles.push({ x, y, text, color: C.magenta, age: 0, ttl: 1.0, drift: 24, quip: true });
     while (this.bubbles.length > CAP_BUBBLES) this.bubbles.shift();
   }
 
@@ -1009,7 +1055,8 @@ export class Battlefield {
     // speech bubbles (top of the world layer)
     for (const b of this.bubbles) {
       const a = b.age < 0.2 ? b.age / 0.2 : clamp((b.ttl - b.age) / 0.5, 0, 1);
-      if (b.ding) drawDing(ctx, b.x, b.y, b.text, a);
+      if (b.quip) drawQuip(ctx, b.x, b.y, b.text, a);
+      else if (b.ding) drawDing(ctx, b.x, b.y, b.text, a);
       else drawSpeechBubble(ctx, b.x, b.y, b.text, a, b.color);
     }
 

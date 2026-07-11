@@ -544,14 +544,14 @@ export function drawInfiltrator(ctx, x, y, s, t, opts) {
 
 // Pixel-art collections must be drawn with imageSmoothingEnabled=false; the rest
 // are illustrations that scale better smoothed. (From docs/research/pfp-assets.json.)
-const PFP_PIXEL = new Set(['nodemonkes', 'stamps', 'runestone']);
+const PFP_PIXEL = new Set(['nodemonkes', 'stamps', 'runestone', 'ordwizards']);
 
 // protocol → candidate collection slugs. inscription/brc20 share the 6 ordinals
 // pools (order matches classify.js INSCRIPTION_POOL so the picked collection and
 // the classifier's faction emoji agree).
 const PFP_MAP = {
-  inscription: ['nodemonkes', 'puppets', 'quantumcats', 'wizards', 'frogs', 'omb'],
-  brc20: ['nodemonkes', 'puppets', 'quantumcats', 'wizards', 'frogs', 'omb'],
+  inscription: ['nodemonkes', 'puppets', 'quantumcats', 'wizards', 'frogs', 'omb', 'ordwizards'],
+  brc20: ['nodemonkes', 'puppets', 'quantumcats', 'wizards', 'frogs', 'omb', 'ordwizards'],
   runes: ['runestone'],
   stamps: ['stamps'],
   src20: ['stamps'],

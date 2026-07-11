@@ -54,32 +54,39 @@
 <!-- Scoreboard: receipts kept from full raw-block scans. -->
 <section class="scoreboard" aria-label="Scoreboard">
   <div class="tile tile-spam">
+    <button class="tile-help" type="button" aria-label="What is this?" data-tip="Confirmed transactions that would violate BIP-110 (rules 1–7) if the fork were active. Counted by scanning 100% of every new block since you opened the page, plus a 3-block backfill.">?</button>
     <span id="stat-violators" class="tile-num">0</span>
     <span class="tile-label">Violators confirmed <em>(full scans)</em></span>
   </div>
   <div class="tile tile-spam">
+    <button class="tile-help" type="button" aria-label="What is this?" data-tip="Combined size (vsize) of all those violator transactions — the blockspace the knights failed to defend.">?</button>
     <span id="stat-spam-mb" class="tile-num">0.00 MB</span>
     <span class="tile-label">Glorious spam by weight</span>
   </div>
   <div class="tile tile-spam">
+    <button class="tile-help" type="button" aria-label="What is this?" data-tip="Violator vsize divided by total vsize across all fully-scanned blocks. How much of the chain the horde is taking.">?</button>
     <span id="stat-spam-share" class="tile-num">—</span>
     <span class="tile-label">Share of blockspace</span>
   </div>
   <div class="tile tile-infil">
+    <button class="tile-help" type="button" aria-label="What is this?" data-tip="Data-carrying transactions (mostly Runes) that pass every BIP-110 rule. The filters have no objection. They walk in the front door with a briefcase.">?</button>
     <span id="stat-infiltrators" class="tile-num">0</span>
     <span class="tile-label">Compliant infiltrators waved through</span>
   </div>
   <div class="tile tile-observed">
+    <button class="tile-help" type="button" aria-label="What is this?" data-tip="Share of BIP-110 violators among transactions streaming into the mempool right now — sampled from the live feed, not a full census.">?</button>
     <span id="stat-observed" class="tile-num">—</span>
     <span class="tile-label">Mempool spam right now <em>(observed)</em></span>
   </div>
   <div class="tile tile-pure">
+    <button class="tile-help" type="button" aria-label="What is this?" data-tip="Consecutive scanned blocks that contained at least one violator. A pure block (zero violators) would reset this. ∞ means we have never witnessed one.">?</button>
     <span id="stat-since-pure" class="tile-num">∞</span>
     <span class="tile-label">Blocks since last pure block</span>
   </div>
   <div class="tile tile-gag" title="Policy is not consensus.">
+    <button class="tile-help" type="button" aria-label="What is this?" data-tip="Percentage of violator transactions the knights' filters have prevented from confirming. It is 0.0%. It has always been 0.0%. Policy is not consensus.">?</button>
     <span id="stat-filter" class="tile-num">0.0%</span>
-    <span class="tile-label">Filter effectiveness <em>(all knights)</em></span>
+    <span class="tile-label">Filter effectiveness</span>
   </div>
 </section>
 
@@ -150,7 +157,9 @@
         Read it yourself:
         <a href="https://github.com/bitcoin/bips/blob/master/bip-0110.mediawiki" target="_blank" rel="noopener">bip-0110.mediawiki</a>
         &nbsp;·&nbsp;
-        <a href="https://bip110.org/" target="_blank" rel="noopener">bip110.org</a>
+        <a href="https://bip110.com" target="_blank" rel="noopener">bip110.com</a>
+        &nbsp;·&nbsp;
+        <a href="https://knotslies.com" target="_blank" rel="noopener">knotslies.com</a>
         &nbsp;·&nbsp;
         <a href="https://blog.lopp.net/a-laymans-guide-to-bip-110/" target="_blank" rel="noopener">Lopp's layman's guide</a>
       </p>
@@ -182,6 +191,7 @@
         <li>Bitcoin Puppets — on-chain inscriptions (ordinals.com)</li>
         <li>Quantum Cats — Taproot Wizards; recursive on-chain inscriptions, previews rendered by Magic Eden (renderer.magiceden.dev), quantumcats.xyz</li>
         <li>Taproot Wizards — on-chain inscriptions (ordinals.com), taprootwizards.com</li>
+        <li>Wizards of Ord — on-chain inscriptions (ordinals.com); 3,333 pixel wizards on block-78 sats, gallery.wizards.art / @TheWizardsOfOrd</li>
         <li>Bitcoin Frogs — on-chain inscriptions (ordinals.com)</li>
         <li>Ordinal Maxi Biz — art by ZK Shark, on-chain inscriptions (ordinals.com)</li>
         <li>Runestone — Leonidas; 112,383-wallet airdrop, March 2024; glyph render courtesy Ordinals Wallet</li>

@@ -697,7 +697,8 @@ function truncate(s, n = 200) {
 // ---------------------------------------------------------------------------
 const INSCRIPTION_POOL = [
   ['NodeMonkes', '🐒'], ['Bitcoin Puppets', '🤡'], ['Quantum Cats', '🐱'],
-  ['Taproot Wizards', '🧙'], ['Bitcoin Frogs', '🐸'], ['Ordinal Maxi Biz', '👁️']
+  ['Taproot Wizards', '🧙'], ['Bitcoin Frogs', '🐸'], ['Ordinal Maxi Biz', '👁️'],
+  ['Wizards of Ord', '🪄']
 ];
 function pickFrom(pool, txid) {
   let h = 0;
