@@ -45,8 +45,9 @@ export const CONFIG = {
   // stream cools below the un-downgrade rate for a full window.
   hotStream: {
     windowMs: 30000, // sustained-measurement window
-    addedPerUpdate: 25, // avg added[] length per update that trips downgrade
-    txPerSecond: 15, // OR sustained tx/s that trips downgrade
+    txPerSecond: 15, // sustained tx/s across the window that trips downgrade
+    // (no per-update threshold: the server batches deltas on its own cadence,
+    // observed anywhere from ~1.7s to ~10s, so batch size ≠ network volume)
     unDowngradeTxPerSecond: 10, // cool-off rate to probe back to live
   },
 

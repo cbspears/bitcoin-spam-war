@@ -132,7 +132,7 @@ export function initHud({ feed, battlefield, taunts }) {
     if (badge) {
       badge.classList.remove('is-live', 'is-degraded', 'is-down');
       if (mode === 'live') { badge.textContent = '● LIVE'; badge.classList.add('is-live'); }
-      else if (mode === 'degraded') { badge.textContent = '● DEGRADED'; badge.classList.add('is-degraded'); }
+      else if (mode === 'degraded') { badge.textContent = '● LIVE (SAMPLED)'; badge.classList.add('is-degraded'); }
       else { badge.textContent = '● OFFLINE'; badge.classList.add('is-down'); }
     }
     setText('status-line', message || (mode === 'live'
@@ -426,6 +426,13 @@ export function initHud({ feed, battlefield, taunts }) {
 
     renderScoreboard();
     renderDoomsday();
+
+    // Light the castle plaque up right away too: the engine only learns the
+    // height from confirmBlock, which backfill (animate:false) never calls.
+    if (battlefield && Number.isFinite(report.height) &&
+        !(battlefield.height >= report.height)) {
+      battlefield.height = report.height;
+    }
 
     // Kill feed: the largest offenders from the full-block scan.
     if (Array.isArray(report.topOffenders)) {

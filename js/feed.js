@@ -494,10 +494,13 @@ export class MempoolFeed extends EventTarget {
 
   _maybeDowngrade() {
     if (this.mode !== 'live') return;
-    const { rate, perUpdate, full } = this._streamStats();
+    const { rate, full } = this._streamStats();
     if (!full) return; // must be sustained across the window
     const cfg = this.config.hotStream;
-    if (perUpdate > cfg.addedPerUpdate || rate > cfg.txPerSecond) {
+    // Only the sustained RATE matters: the server batches deltas on a cadence
+    // it chooses (observed anywhere from ~1.7s to ~10s), so per-update batch
+    // size says nothing about network volume.
+    if (rate > cfg.txPerSecond) {
       this._wsSend({ 'track-mempool': false });
       this._wsSend({ 'track-mempool-txids': true });
       this._streamSamples = [];
