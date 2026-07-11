@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>THE BATTLE FOR BLOCKSPACE</title>
+  <meta name="description" content="A satirical live visualization of the Bitcoin spam war. Real mempool transactions charge the blockchain gate; the filters bounce off. Parody — data courtesy of mempool.space.">
+  <meta name="color-scheme" content="dark">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ctext y='14' font-size='14'%3E%F0%9F%8F%B0%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header class="site-header">
+  <div class="header-titles">
+    <h1 class="site-title">THE BATTLE FOR BLOCKSPACE</h1>
+    <p id="subtitle-taunt" class="subtitle">Loading the front line…</p>
+  </div>
+  <div class="header-controls">
+    <span id="live-badge" class="live-badge is-down">● OFFLINE</span>
+    <button id="open-modal" class="btn-ghost" type="button">How this works</button>
+  </div>
+  <p id="status-line" class="status-line">Connecting to the mempool…</p>
+</header>
+
+<!-- Doomsday clock: the war-progress bar, computed from real block versions. -->
+<section class="doomsday" aria-label="BIP-110 doomsday clock">
+  <div class="doomsday-lines">
+    <p id="dc-primary" class="dc-primary">MANDATORY BIP-110 SIGNALING: block 961,632 — awaiting first block…</p>
+    <p id="dc-secondary" class="dc-secondary">Max activation: block 965,664 — awaiting first block…</p>
+    <p id="dc-signaling" class="dc-signaling">Signaling: no blocks scanned yet (need 55%)</p>
+  </div>
+  <div class="doomsday-bar" role="presentation"><span id="dc-bar" class="doomsday-bar-fill"></span></div>
+</section>
+
+<!-- Scoreboard: receipts kept from full raw-block scans. -->
+<section class="scoreboard" aria-label="Scoreboard">
+  <div class="tile tile-spam">
+    <span id="stat-violators" class="tile-num">0</span>
+    <span class="tile-label">Violators confirmed <em>(full scans)</em></span>
+  </div>
+  <div class="tile tile-spam">
+    <span id="stat-spam-mb" class="tile-num">0.00 MB</span>
+    <span class="tile-label">Glorious spam by weight</span>
+  </div>
+  <div class="tile tile-spam">
+    <span id="stat-spam-share" class="tile-num">—</span>
+    <span class="tile-label">Share of blockspace</span>
+  </div>
+  <div class="tile tile-infil">
+    <span id="stat-infiltrators" class="tile-num">0</span>
+    <span class="tile-label">Compliant infiltrators waved through</span>
+  </div>
+  <div class="tile tile-observed">
+    <span id="stat-observed" class="tile-num">—</span>
+    <span class="tile-label">Mempool spam right now <em>(observed)</em></span>
+  </div>
+  <div class="tile tile-pure">
+    <span id="stat-since-pure" class="tile-num">∞</span>
+    <span class="tile-label">Blocks since last pure block</span>
+  </div>
+  <div class="tile tile-gag" title="Policy is not consensus.">
+    <span id="stat-filter" class="tile-num">0.0%</span>
+    <span class="tile-label">Filter effectiveness <em>(all knights)</em></span>
+  </div>
+</section>
+
+<!-- Main battlefield + right-rail kill feed. -->
+<main class="stage">
+  <div class="battlefield-wrap">
+    <canvas id="battlefield" aria-label="Battlefield: real transactions charging the blockchain gate"></canvas>
+  </div>
+  <aside class="killfeed-rail" aria-label="Kill feed">
+    <h2 class="rail-title">KILL FEED</h2>
+    <ul id="kill-feed" class="kill-feed">
+      <li class="kill-empty">Awaiting the first casualties of the block…</li>
+    </ul>
+  </aside>
+</main>
+
+<!-- Bottom commentary ticker. -->
+<div class="ticker-strip" aria-label="War commentary">
+  <span class="ticker-tag">FRONT DISPATCH</span>
+  <p id="ticker" class="ticker">The horde masses at the gate.</p>
+</div>
+
+<!-- Dossier: opens on unit / kill-feed click. -->
+<aside id="dossier" class="dossier" aria-label="Unit dossier" hidden>
+  <div class="dossier-head">
+    <h2 id="dossier-title" class="dossier-title">Unit dossier</h2>
+    <button id="dossier-close" class="btn-close" type="button" aria-label="Close dossier">✕</button>
+  </div>
+  <div id="dossier-body" class="dossier-body"></div>
+</aside>
+
+<!-- "How this works" modal: honest methodology. -->
+<div id="modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" hidden>
+  <div class="modal-card">
+    <div class="modal-head">
+      <h2 id="modal-title">How this works (honestly)</h2>
+      <button id="modal-close" class="btn-close" type="button" aria-label="Close">✕</button>
+    </div>
+    <div class="modal-body">
+      <p>This is a <strong>parody dashboard</strong>. Every unit on the battlefield is a
+      <strong>real Bitcoin transaction</strong>, streamed live and classified in your browser.
+      Click any unit — or any kill-feed row — for its txid, matched rule text, and a link to
+      mempool.space. Nothing here is fabricated; only the framing is a joke.</p>
+
+      <h3>What BIP-110 actually is</h3>
+      <p><strong>BIP-110 — "Reduced Data Temporary Softfork"</strong> is a real proposal
+      (author: pseudonymous <em>Dathon Ohm</em>; original draft &amp; advice credited to Luke-Jr).
+      It is a temporary, one-year consensus soft fork with seven rules that invalidate the main
+      arbitrary-data embedding tricks — inscription envelopes, oversized pushes, bare-multisig data
+      stuffing, big OP_RETURNs, and more. Deployment is a modified BIP9 on bit 4 with a 55%
+      threshold, <strong>mandatory signaling at blocks 961,632–963,647</strong> (~Aug 7 2026 — blocks
+      not signaling are rejected), max activation height 965,664 (~Sep 1 2026), then auto-expiry
+      after 52,416 blocks. As of mid-2026 miner signaling sits near ~0.31% of hashrate.</p>
+
+      <blockquote class="quotes">
+        <p>"Yes, this proposal intentionally breaks user space, specifically the data storage user space." — BIP-110 text</p>
+        <p>"The previous limit allows for 340,282,366,920,938,463,463,374,607,431,768,211,456 scripts, which is obviously way more than anyone could ever need." — BIP-110 Rationale</p>
+        <p>"If no further action is taken by you, it will expire in a year." — BIP-110 text</p>
+        <p>"And no, it's too late to cancel BIP110." — Luke Dashjr</p>
+        <p>"Fork around and find out." — Jameson Lopp (opposition)</p>
+      </blockquote>
+      <p class="links">
+        Read it yourself:
+        <a href="https://github.com/bitcoin/bips/blob/master/bip-0110.mediawiki" target="_blank" rel="noopener">bip-0110.mediawiki</a>
+        &nbsp;·&nbsp;
+        <a href="https://bip110.org/" target="_blank" rel="noopener">bip110.org</a>
+        &nbsp;·&nbsp;
+        <a href="https://blog.lopp.net/a-laymans-guide-to-bip-110/" target="_blank" rel="noopener">Lopp's layman's guide</a>
+      </p>
+
+      <h3>How we classify</h3>
+      <ul>
+        <li><strong>Rules applied flat.</strong> The fork is <em>not active</em>. We check all seven
+        rules against every transaction and label the verdict "<em>would violate BIP-110 if active</em>."
+        We do <strong>not</strong> apply the grandfathering exemption (pre-activation UTXOs), because
+        there is no activation height to grandfather against yet.</li>
+        <li><strong>Full-block scans for headline numbers.</strong> On each new block we fetch the raw
+        block and classify <em>100% of its transactions</em> — no first-100 sampling bias. The
+        scoreboard's violator counts, weight, and blockspace share come from these full scans.</li>
+        <li><strong>"Observed" is sampled.</strong> The live mempool percentage is drawn from the
+        streamed transactions we happen to see, and is labeled "observed" — not a headline figure.</li>
+        <li><strong>Faces are cosmetic.</strong> We can't cheaply resolve which collection a unit
+        belongs to, so each protocol maps to a faction pool and a random face is drawn. The emoji is
+        flavor; the protocol, rule text, and txid are real.</li>
+        <li><strong>Block scans lack prevouts.</strong> Raw block transactions have no spent-output
+        data, so BIP-110 rule 3 and per-transaction fees can't be evaluated there (marked "n/a").
+        Fees in the kill feed come from the mempool stream; block fee totals from block extras.</li>
+      </ul>
+
+      <h3>Honest caveats</h3>
+      <ul>
+        <li><strong>Knots node share is disputed.</strong> Bitcoin Knots is often cited at ~20–25% of
+        reachable nodes; opponents argue that figure is Sybil-inflated. Treat it as
+        "~20–25%, disputed."</li>
+        <li><strong>"Spam" ≠ "noncompliant."</strong> Some culturally-"spam" traffic (small Runes) is
+        fully BIP-110 compliant — those are our "infiltrators," strolling through legally. That gap is
+        the whole joke.</li>
+        <li><strong>Data courtesy of <a href="https://mempool.space" target="_blank" rel="noopener">mempool.space</a></strong>
+        (and its public mirrors). This site is not affiliated with mempool.space.</li>
+      </ul>
+
+      <p class="disclaimer">Satire of a public policy debate among public figures. Playful, not
+      defamatory. No filters were harmed in the making of this dashboard.</p>
+    </div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <p>Parody. All transactions are real. No filters were harmed. Not affiliated with mempool.space.
+  100% BIP-110-noncompliant website.</p>
+  <p>
+    Data courtesy of <a href="https://mempool.space" target="_blank" rel="noopener">mempool.space</a>.
+    Inspired by <a href="https://github.com/nickgrnawalt" target="_blank" rel="noopener">Bitcoin Battlefield</a> by Nick Greenawalt.
+    <button id="open-modal-footer" class="btn-link" type="button">How this works</button>
+  </p>
+</footer>
+
+<script type="module" src="js/main.js"></script>
+</body>
+</html>
