@@ -95,6 +95,22 @@ export const CONFIG = {
     whaleBytes: 100000, // dataBytes over this = slow-mo + shake + scorch mark
   },
 
+  // --- Trench Chat (Nostr NIP-28 kind-42) ---------------------------------
+  // Relay roles are split per docs/research/nostr.json: read from the two
+  // relays that both accept AND serve anonymous kind-42 (damus + primal);
+  // write to those plus nostr.mom (a free extra copy), but NEVER count
+  // nostr.mom toward durability — it shadow-accepts kind-42 then drops it.
+  chat: {
+    enabled: true,
+    channelId: 'e7896af04cf2fcdea9b209f801547f1ff529c73eb24c760855889bcdda481aa5',
+    readRelays: ['wss://relay.primal.net', 'wss://relay.damus.io'],
+    writeRelays: ['wss://relay.primal.net', 'wss://relay.damus.io', 'wss://nostr.mom'],
+    countRelays: ['wss://relay.primal.net', 'wss://relay.damus.io'],
+    maxLen: 240,
+    cooldownMs: 3000,
+    historyHours: 6,
+  },
+
   // --- Palette (near-black pixel-war; mirrored in css/style.css) -----------
   colors: {
     field: '#0b0e14', // near-black battlefield

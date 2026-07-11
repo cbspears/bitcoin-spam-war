@@ -6,6 +6,24 @@
   <title>THE BATTLE FOR BLOCKSPACE</title>
   <meta name="description" content="A satirical live visualization of the Bitcoin spam war. Real mempool transactions charge the blockchain gate; the filters bounce off. Parody — data courtesy of mempool.space.">
   <meta name="color-scheme" content="dark">
+
+  <!-- Social card (og/meta-snippet.html). og.png served from repo root at /og.png. -->
+  <meta property="og:title" content="THE BATTLE FOR BLOCKSPACE">
+  <meta property="og:description" content="A live, satirical visualization of Bitcoin's spam war. Every unit charging the blockchain is a real mempool transaction — watch the Filter Knights lose in real time.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://bitcoin-spam-war.vercel.app/">
+  <meta property="og:image" content="https://bitcoin-spam-war.vercel.app/og.png">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Real Bitcoin-inscription JPEG creatures charge a castle labeled THE BLOCKCHAIN, defended by three tiny Filter Knights whose shots bounce off. Banner: MANDATORY BIP-110 SIGNALING — BLOCK 961,632.">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="THE BATTLE FOR BLOCKSPACE">
+  <meta name="twitter:description" content="Watch the Filter Knights lose in real time — every unit on the battlefield is a real Bitcoin transaction.">
+  <meta name="twitter:image" content="https://bitcoin-spam-war.vercel.app/og.png">
+  <meta name="twitter:image:alt" content="Real Bitcoin-inscription JPEG creatures charge a castle defended by three tiny Filter Knights.">
+
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ctext y='14' font-size='14'%3E%F0%9F%8F%B0%3C/text%3E%3C/svg%3E">
   <link rel="stylesheet" href="css/style.css">
 </head>
@@ -69,11 +87,16 @@
   <div class="battlefield-wrap">
     <canvas id="battlefield" aria-label="Battlefield: real transactions charging the blockchain gate"></canvas>
   </div>
-  <aside class="killfeed-rail" aria-label="Kill feed">
-    <h2 class="rail-title">KILL FEED</h2>
-    <ul id="kill-feed" class="kill-feed">
-      <li class="kill-empty">Awaiting the first casualties of the block…</li>
-    </ul>
+  <aside class="rail" aria-label="Side rail">
+    <section class="killfeed-rail" aria-label="Kill feed">
+      <h2 class="rail-title">KILL FEED</h2>
+      <ul id="kill-feed" class="kill-feed">
+        <li class="kill-empty">Awaiting the first casualties of the block…</li>
+      </ul>
+    </section>
+    <!-- Trench Chat panel; chat.js builds its innards. Empty + degrades to
+         "comms jammed" if chat is disabled or every relay is down. -->
+    <section id="trench-chat" class="trench-chat" aria-label="Trench chat"></section>
   </aside>
 </main>
 
@@ -149,6 +172,28 @@
         data, so BIP-110 rule 3 and per-transaction fees can't be evaluated there (marked "n/a").
         Fees in the kill feed come from the mempool stream; block fee totals from block extras.</li>
       </ul>
+
+      <h3>The art on the units</h3>
+      <p>Unit faces are sample pieces from iconic collections (cosmetic only, not the
+      actual inscription in the transaction):</p>
+      <ul class="attribution">
+        <li>NodeMonkes — on-chain inscriptions (ordinals.com), nodemonkes.com</li>
+        <li>Bitcoin Puppets — on-chain inscriptions (ordinals.com)</li>
+        <li>Quantum Cats — Taproot Wizards; recursive on-chain inscriptions, previews rendered by Magic Eden (renderer.magiceden.dev), quantumcats.xyz</li>
+        <li>Taproot Wizards — on-chain inscriptions (ordinals.com), taprootwizards.com</li>
+        <li>Bitcoin Frogs — on-chain inscriptions (ordinals.com)</li>
+        <li>Ordinal Maxi Biz — art by ZK Shark, on-chain inscriptions (ordinals.com)</li>
+        <li>Runestone — Leonidas; 112,383-wallet airdrop, March 2024; glyph render courtesy Ordinals Wallet</li>
+        <li>Bitcoin Stamps — Stamps #0, #4, #5 by Mike In Space &amp; Arwyn (2023), decoded from on-chain data via stampchain.io</li>
+        <li>Rare Pepe — Counterparty cards (2016): RAREPEPE ("Nakamoto card"), PEPECASH, FEELSGOODMAN (Matt Furie); images via tokenscan.io, rarepepes.com</li>
+      </ul>
+      <p class="disclaimer">Collection indexes courtesy Ordinals Wallet (turbo API). All art belongs
+      to its creators/holders; used here as tiny sprites in a non-commercial parody visualization.</p>
+
+      <h3>Trench Chat</h3>
+      <p>Trench Chat runs on Nostr (NIP-28) over public relays — no server, no accounts, burner keys
+      minted in your browser. BIP-110 literally advises storing data on Nostr instead. We complied.</p>
+      <p class="links">Channel: <code>e7896af04cf2fcdea9b209f801547f1ff529c73eb24c760855889bcdda481aa5</code></p>
 
       <h3>Honest caveats</h3>
       <ul>

@@ -531,12 +531,71 @@ export function drawInfiltrator(ctx, x, y, s, t, opts) {
   }
 }
 
+// ---- collection PFPs ------------------------------------------------------
+//
+// Cosmetic-only mapping from a violator's protocol to a pool of iconic
+// Bitcoin-art collections (see assets/pfps/manifest.json). The pick is
+// deterministic from the txid — same hash trick as classify.js pickFrom — so a
+// unit keeps the same face across re-renders AND both callers (battle.js
+// drawViolator + hud.js kill-feed/dossier) resolve the IDENTICAL face without
+// sharing state. This is applied ONLY to violator units by both callers, so the
+// "runes violator → runestone" rule falls out for free (compliant runes are
+// infiltrators and never draw a JPEG frame / never enter the kill feed).
+
+// Pixel-art collections must be drawn with imageSmoothingEnabled=false; the rest
+// are illustrations that scale better smoothed. (From docs/research/pfp-assets.json.)
+const PFP_PIXEL = new Set(['nodemonkes', 'stamps', 'runestone']);
+
+// protocol → candidate collection slugs. inscription/brc20 share the 6 ordinals
+// pools (order matches classify.js INSCRIPTION_POOL so the picked collection and
+// the classifier's faction emoji agree).
+const PFP_MAP = {
+  inscription: ['nodemonkes', 'puppets', 'quantumcats', 'wizards', 'frogs', 'omb'],
+  brc20: ['nodemonkes', 'puppets', 'quantumcats', 'wizards', 'frogs', 'omb'],
+  runes: ['runestone'],
+  stamps: ['stamps'],
+  src20: ['stamps'],
+  counterparty: ['rarepepe'],
+};
+
+function pfpHash(s) {
+  let h = 0;
+  const str = s || '';
+  for (let i = 0; i < str.length; i++) h = (h * 31 + str.charCodeAt(i)) >>> 0;
+  return h;
+}
+
+// Deterministic collection-art pick for a violator. `manifest` is the parsed
+// assets/pfps/manifest.json ({collections:{<slug>:{name,files:[...],...}}}).
+// Returns {slug, name, file, pixel} or null (unmapped protocol / no manifest /
+// collection absent). `file` is relative to assets/pfps/ (e.g. "nodemonkes/03.png").
+export function pickPfp(protocol, txid, manifest) {
+  if (!manifest || !manifest.collections) return null;
+  const slugs = PFP_MAP[protocol];
+  if (!slugs || !slugs.length) return null;
+  const avail = [];
+  for (const slug of slugs) {
+    const c = manifest.collections[slug];
+    if (c && Array.isArray(c.files) && c.files.length) avail.push(slug);
+  }
+  if (!avail.length) return null;
+  const h = pfpHash(txid);
+  const slug = avail[h % avail.length];
+  const col = manifest.collections[slug];
+  const file = col.files[Math.floor(h / avail.length) % col.files.length];
+  return { slug, name: col.name || slug, file, pixel: PFP_PIXEL.has(slug) };
+}
+
 // VIOLATOR — a framed JPEG creature charging the wall. opts: emoji, hue, t,
-// hp (unused, cosmetic), charge (0..1 lean)
+// charge (0..1 lean), image (HTMLImageElement | null), pixel (bool). When the
+// image is loaded it's drawn cover-fit inside the frame (pixel → nearest
+// neighbour); the emoji stays the fallback while loading / on error / no pfp.
 export function drawViolator(ctx, x, y, size, opts) {
   const t = opts.t || 0;
   const hue = opts.hue || P.magenta;
   const half = size / 2;
+  const img = opts.image;
+  const imgReady = !!(img && img.complete && img.naturalWidth > 0);
   ctx.save();
   // shadow
   ctx.fillStyle = P.shadow;
@@ -557,29 +616,50 @@ export function drawViolator(ctx, x, y, size, opts) {
   ctx.fillStyle = '#0d1017';
   roundRect(ctx, -half, -half, size, size, size * 0.1);
   ctx.fill();
-  // glitchy border
+
+  // collection art, cover-fit + clipped to the frame's inner rect (inset by the
+  // border so the glitchy frame stays visible). Smoothing flag toggled inside a
+  // save/restore so it never leaks to the rest of the scene.
+  if (imgReady) {
+    const bw = Math.max(2, size * 0.06);
+    const ix = -half + bw, iw = size - bw * 2;
+    ctx.save();
+    roundRect(ctx, ix, ix, iw, iw, size * 0.08);
+    ctx.clip();
+    ctx.imageSmoothingEnabled = !opts.pixel;
+    const sw = img.naturalWidth, sh = img.naturalHeight;
+    const scale = Math.max(iw / sw, iw / sh);
+    const dw = sw * scale, dh = sh * scale;
+    ctx.drawImage(img, ix + (iw - dw) / 2, ix + (iw - dh) / 2, dw, dh);
+    ctx.restore();
+  }
+
+  // glitchy border (over the art edge)
   ctx.lineWidth = Math.max(2, size * 0.06);
   ctx.strokeStyle = hue;
+  roundRect(ctx, -half, -half, size, size, size * 0.1);
   ctx.stroke();
-  // subtle scanline texture inside
+
+  // subtle scanline texture + corner "compression" chunks (lighter over art)
   ctx.save();
   roundRect(ctx, -half, -half, size, size, size * 0.1);
   ctx.clip();
-  ctx.globalAlpha = 0.12;
+  ctx.globalAlpha = imgReady ? 0.08 : 0.12;
   ctx.fillStyle = hue;
   for (let yy = -half; yy < half; yy += 4) ctx.fillRect(-half, yy, size, 1.5);
   ctx.globalAlpha = 1;
-  // corner "compression" chunks
   ctx.fillStyle = 'rgba(255,61,245,0.25)';
   ctx.fillRect(-half, -half, size * 0.22, size * 0.22);
   ctx.fillRect(half - size * 0.28, half - size * 0.3, size * 0.28, size * 0.3);
   ctx.restore();
 
-  // face emoji
-  ctx.font = `${Math.round(size * 0.66)}px ${MONO}`;
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.fillText(opts.emoji || '🖼️', 0, size * 0.02);
+  // face emoji — only when no art is on screen (loading / error / unmapped)
+  if (!imgReady) {
+    ctx.font = `${Math.round(size * 0.66)}px ${MONO}`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(opts.emoji || '🖼️', 0, size * 0.02);
+  }
   ctx.restore();
 }
 

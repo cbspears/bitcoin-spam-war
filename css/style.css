@@ -438,3 +438,309 @@ body.reduced-motion .dossier { transition: none; }
   .battlefield-wrap { height: 48vh; }
   .dossier { width: 100vw; }
 }
+
+/* =========================================================================
+   TRENCH CHAT (Nostr) — appended by the chat builder.
+   Right-rail panel under the kill feed on desktop; floating bottom sheet
+   under 900px. All motion gated behind body.reduced-motion.
+   ========================================================================= */
+
+/* Rail now stacks the kill feed (top) and the chat panel (bottom). It stretches
+   to the battlefield height via .stage's align-items:stretch. */
+.rail {
+  flex: 0 0 320px;
+  max-width: 320px;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+/* Rail children split the vertical space by flex-grow (basis 0) so neither the
+   kill feed's nor the chat's natural content forces the rail wider than 55vh on
+   tall screens. Their min-heights un-tie the rail from 55vh: on short (laptop)
+   heights the min-heights win and the rail grows past the battlefield rather
+   than crushing the chat's fixed chrome. Chat gets the larger grow share. */
+.rail .killfeed-rail {
+  flex: 2 1 0;
+  max-width: none;
+  min-width: 0;
+  min-height: 140px;
+}
+
+/* Chat panel shell (matches tile/rail patterns). min-height covers the full
+   fixed chrome (head that wraps to 2 lines at 320px + status + identity +
+   composer + channel-id footer, ~200px) plus a usable message list, so the
+   composer and SPEC-required channel-id footer are never clipped. */
+.trench-chat {
+  flex: 3 1 0;
+  min-width: 0;
+  min-height: 360px;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  overflow: hidden;
+}
+/* Disabled / not-yet-built chat leaves the section empty: hide it entirely so
+   the kill feed reclaims the rail. */
+.trench-chat:empty { display: none; }
+
+.tc-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--line);
+  background: var(--bg-3);
+}
+.tc-title {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--orange);
+  text-transform: uppercase;
+}
+.tc-chip { font-size: 11px; color: var(--magenta); letter-spacing: 0.04em; }
+.tc-presence {
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--ink-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+.tc-presence b { color: var(--green); font-variant-numeric: tabular-nums; }
+.tc-close {
+  display: none; /* shown only in the mobile sheet */
+  font-family: var(--mono);
+  cursor: pointer;
+  background: transparent;
+  color: var(--steel);
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  font-size: 14px;
+  line-height: 1;
+  padding: 2px 7px;
+}
+.tc-close:hover { color: var(--ink); border-color: var(--steel); }
+
+.tc-status {
+  padding: 5px 12px;
+  font-size: 11px;
+  color: var(--ink-dim);
+  border-bottom: 1px solid var(--line);
+  background: rgba(0, 0, 0, 0.2);
+}
+.tc-status.jammed { color: var(--red); }
+
+.tc-messages {
+  flex: 1 1 auto;
+  min-height: 120px;
+  overflow-y: auto;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12.5px;
+}
+.tc-empty { color: var(--ink-dim); font-style: italic; padding: 8px 2px; }
+
+.tc-row {
+  display: flex;
+  gap: 6px;
+  align-items: baseline;
+  padding: 2px 4px;
+  border-radius: 3px;
+}
+.tc-row.mine { background: rgba(255, 107, 53, 0.08); }
+.tc-nick {
+  flex: 0 0 auto;
+  font-weight: 700;
+  max-width: 42%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.tc-nick::after { content: ":"; color: var(--ink-dim); font-weight: 400; }
+.tc-text {
+  min-width: 0;
+  color: var(--ink);
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+.tc-row.state-pending { opacity: 0.72; }
+.tc-row.state-failed .tc-text { color: var(--ink-dim); }
+.tc-badge { flex: 0 0 auto; color: var(--red); font-size: 12px; cursor: help; }
+
+.tc-hint {
+  padding: 5px 12px;
+  font-size: 11.5px;
+  color: var(--steel);
+  border-top: 1px solid var(--line);
+}
+.tc-hint.warn { color: var(--gold); }
+.tc-hint.err { color: var(--red); }
+.tc-hint.ok { color: var(--green); }
+
+.tc-identity {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  font-size: 11.5px;
+  color: var(--ink-dim);
+  border-top: 1px solid var(--line);
+}
+.tc-you { font-weight: 700; }
+.tc-edit, .tc-nick-save, .tc-nick-cancel {
+  font-family: var(--mono);
+  cursor: pointer;
+  background: transparent;
+  color: var(--steel);
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  font-size: 11px;
+  line-height: 1;
+  padding: 2px 6px;
+}
+.tc-edit:hover, .tc-nick-save:hover, .tc-nick-cancel:hover { color: var(--ink); border-color: var(--steel); }
+.tc-nick-save:hover { color: var(--green); border-color: var(--green); }
+.tc-nick-input {
+  font-family: var(--mono);
+  background: #05070c;
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  padding: 3px 6px;
+  font-size: 16px; /* ≥16px: iOS Safari auto-zooms on focus of sub-16px inputs */
+  min-width: 0;
+  flex: 1 1 auto;
+}
+.tc-nick-input:focus { outline: none; border-color: var(--orange); }
+
+.tc-composer {
+  display: flex;
+  gap: 6px;
+  padding: 8px 10px;
+  border-top: 1px solid var(--line);
+  background: var(--bg-3);
+}
+.tc-input {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-family: var(--mono);
+  background: #05070c;
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  padding: 7px 9px;
+  font-size: 16px; /* ≥16px: iOS Safari auto-zooms on focus of sub-16px inputs */
+}
+.tc-input::placeholder { color: var(--ink-dim); }
+.tc-input:focus { outline: none; border-color: var(--orange); box-shadow: 0 0 0 1px rgba(255, 107, 53, 0.4); }
+.tc-input.shake { animation: tcShake 0.32s ease; }
+body.reduced-motion .tc-input.shake { animation: none; }
+@keyframes tcShake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-4px); }
+  40% { transform: translateX(4px); }
+  60% { transform: translateX(-3px); }
+  80% { transform: translateX(3px); }
+}
+.tc-send {
+  flex: 0 0 auto;
+  font-family: var(--mono);
+  cursor: pointer;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--bg);
+  background: var(--orange);
+  border: 1px solid var(--orange);
+  border-radius: 3px;
+  padding: 0 12px;
+  font-size: 12px;
+  min-width: 68px;
+}
+.tc-send:hover:not(:disabled) { background: var(--gold); border-color: var(--gold); }
+.tc-send:disabled { cursor: default; opacity: 0.55; background: var(--bg-2); color: var(--ink-dim); border-color: var(--line); }
+
+.tc-footer {
+  padding: 7px 12px 9px;
+  border-top: 1px solid var(--line);
+  color: var(--ink-dim);
+}
+.tc-micro { margin: 0; font-size: 10.5px; font-style: italic; line-height: 1.35; }
+.tc-channel { margin: 3px 0 0; font-size: 10.5px; }
+.tc-channel-id {
+  font-family: var(--mono);
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  color: var(--gold);
+  text-decoration: underline dotted;
+  padding: 0;
+  font-size: 10.5px;
+}
+.tc-channel-id:hover { color: var(--orange); }
+
+/* Floating mobile toggle — hidden on desktop, shown under 900px. */
+.tc-fab {
+  display: none;
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 1px solid var(--orange);
+  background: radial-gradient(circle at 30% 30%, var(--magenta), var(--orange));
+  color: #fff;
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+  z-index: 150;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+  align-items: center;
+  justify-content: center;
+}
+.tc-fab.has-unread::after {
+  content: "";
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--green);
+  border: 2px solid var(--bg);
+}
+
+/* ---------- mobile: chat becomes a bottom sheet ---------- */
+@media (max-width: 900px) {
+  .rail { flex: 0 0 auto; max-width: none; }
+  .rail .killfeed-rail { flex: 0 0 auto; max-height: 200px; }
+
+  .tc-fab { display: inline-flex; }
+  .tc-close { display: inline-flex; }
+
+  .trench-chat {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: min(72vh, 560px);
+    max-width: none;
+    border-radius: 12px 12px 0 0;
+    border: 1px solid var(--orange);
+    border-bottom: none;
+    box-shadow: 0 -12px 34px rgba(0, 0, 0, 0.55);
+    transform: translateY(102%);
+    transition: transform 0.28s ease;
+    z-index: 160;
+  }
+  body.chat-sheet-open .trench-chat { transform: translateY(0); }
+  body.reduced-motion .trench-chat { transition: none; }
+}

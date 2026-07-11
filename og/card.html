@@ -1,0 +1,519 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>THE BATTLE FOR BLOCKSPACE — social card</title>
+<style>
+  /* 1200x630 social card for THE BATTLE FOR BLOCKSPACE.
+     Matches the live site's dark CRT-war aesthetic (css/style.css palette).
+     Rendered to og.png with headless chrome; see og/generate.md. */
+  :root {
+    --bg: #0b0e14;
+    --bg-2: #11151f;
+    --bg-3: #171c28;
+    --line: #263042;
+    --orange: #ff6b35;
+    --magenta: #ff3df5;
+    --gold: #f7b32b;
+    --steel: #9fb4c7;
+    --ink: #e6edf3;
+    --ink-dim: #8595a8;
+    --green: #3ddc84;
+    --mono: ui-monospace, "SF Mono", "Cascadia Code", "JetBrains Mono",
+      "Consolas", "DejaVu Sans Mono", monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    width: 1200px;
+    height: 630px;
+    overflow: hidden;
+    background: var(--bg);
+    font-family: var(--mono);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .card {
+    position: relative;
+    width: 1200px;
+    height: 630px;
+    /* parallax war sky: deep magenta/orange glow bleeding up from the field */
+    background:
+      radial-gradient(120% 90% at 78% 118%, rgba(255, 61, 245, 0.16) 0%, rgba(255, 61, 245, 0) 46%),
+      radial-gradient(90% 80% at 20% 120%, rgba(255, 107, 53, 0.18) 0%, rgba(255, 107, 53, 0) 48%),
+      linear-gradient(180deg, #05070c 0%, #0b0e14 58%, #0e1119 100%);
+    overflow: hidden;
+  }
+  /* CRT scanline wash */
+  .card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 40;
+    background: repeating-linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0) 0,
+      rgba(0, 0, 0, 0) 2px,
+      rgba(0, 0, 0, 0.16) 3px
+    );
+    mix-blend-mode: multiply;
+    opacity: 0.55;
+  }
+  /* corner vignette */
+  .card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 39;
+    pointer-events: none;
+    box-shadow: inset 0 0 140px 40px rgba(0, 0, 0, 0.6);
+  }
+
+  /* ---------- header ---------- */
+  .head {
+    position: relative;
+    z-index: 10;
+    padding: 34px 44px 0;
+  }
+  .kicker {
+    display: inline-block;
+    font-size: 15px;
+    letter-spacing: 0.42em;
+    text-transform: uppercase;
+    color: var(--orange);
+    border: 1px solid rgba(255, 107, 53, 0.5);
+    border-radius: 3px;
+    padding: 4px 12px 4px 14px;
+    text-shadow: 0 0 8px rgba(255, 107, 53, 0.6);
+  }
+  .title {
+    margin-top: 16px;
+    font-size: 74px;
+    line-height: 0.98;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: var(--ink);
+    text-shadow:
+      0 0 2px rgba(255, 61, 245, 0.7),
+      0 0 22px rgba(255, 107, 53, 0.55),
+      0 0 46px rgba(255, 61, 245, 0.35),
+      0 4px 0 rgba(0, 0, 0, 0.4);
+  }
+  .title .spam { color: var(--magenta); }
+  .tagline {
+    margin-top: 14px;
+    font-size: 21px;
+    line-height: 1.35;
+    color: var(--steel);
+    max-width: 900px;
+  }
+  .tagline b { color: var(--gold); font-weight: 700; }
+
+  /* ---------- battlefield ---------- */
+  .field {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 60px;
+    top: 292px;
+    z-index: 8;
+  }
+  /* ground line */
+  .field::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 74px;
+    background:
+      linear-gradient(180deg, rgba(159, 180, 199, 0) 0%, rgba(11, 14, 20, 0) 40%, #090b11 100%),
+      repeating-linear-gradient(90deg, rgba(38, 48, 66, 0.35) 0 2px, rgba(0, 0, 0, 0) 2px 46px);
+    border-top: 1px solid rgba(159, 180, 199, 0.22);
+  }
+
+  /* ---------- castle + knights (left) ---------- */
+  .keep {
+    position: absolute;
+    left: 44px;
+    bottom: 14px;
+    width: 250px;
+    z-index: 9;
+  }
+  .keep-label {
+    text-align: center;
+    margin-bottom: 6px;
+  }
+  .keep-height {
+    font-size: 13px;
+    color: var(--gold);
+    letter-spacing: 0.12em;
+    text-shadow: 0 0 8px rgba(247, 179, 43, 0.5);
+  }
+  .keep-name {
+    font-size: 12px;
+    color: var(--steel);
+    letter-spacing: 0.2em;
+    margin-top: 2px;
+  }
+  .castle {
+    position: relative;
+    height: 128px;
+    background: linear-gradient(180deg, #28313f 0%, #1a222e 100%);
+    border: 2px solid #3b4a5f;
+    border-bottom: none;
+    border-radius: 3px 3px 0 0;
+    box-shadow: 0 0 0 1px #05070c, inset 0 0 24px rgba(0, 0, 0, 0.55);
+  }
+  /* crenellations */
+  .castle::before {
+    content: "";
+    position: absolute;
+    top: -12px;
+    left: -2px;
+    right: -2px;
+    height: 12px;
+    background:
+      repeating-linear-gradient(90deg,
+        #28313f 0 16px,
+        rgba(0, 0, 0, 0) 16px 32px);
+  }
+  /* gate */
+  .gate {
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    transform: translateX(-50%);
+    width: 78px;
+    height: 92px;
+    background: radial-gradient(120% 90% at 50% 100%, #14304a 0%, #060a12 70%);
+    border: 2px solid #3b4a5f;
+    border-bottom: none;
+    border-radius: 40px 40px 0 0;
+    box-shadow: inset 0 0 18px rgba(0, 0, 0, 0.8);
+  }
+  /* checkpoint lamp */
+  .lamp {
+    position: absolute;
+    right: 10px;
+    top: 12px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 10px 2px rgba(61, 220, 132, 0.8);
+  }
+  /* knight squad in front of the gate */
+  .squad {
+    position: absolute;
+    left: 190px;
+    bottom: 16px;
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+    z-index: 11;
+  }
+  .knight {
+    position: relative;
+    width: 34px;
+    height: 52px;
+  }
+  .knight .helm {
+    position: absolute;
+    top: 0;
+    left: 5px;
+    width: 24px;
+    height: 20px;
+    background: linear-gradient(180deg, #c3d2e0 0%, #8ba0b5 100%);
+    border: 1px solid #05070c;
+    border-radius: 6px 6px 3px 3px;
+  }
+  .knight .helm::after { /* visor slit */
+    content: "";
+    position: absolute;
+    left: 3px;
+    right: 3px;
+    top: 9px;
+    height: 3px;
+    background: #05070c;
+  }
+  .knight .body {
+    position: absolute;
+    bottom: 8px;
+    left: 3px;
+    width: 28px;
+    height: 28px;
+    background: linear-gradient(180deg, #9fb4c7 0%, #64788c 100%);
+    border: 1px solid #05070c;
+    border-radius: 4px;
+  }
+  .knight .shield {
+    position: absolute;
+    bottom: 10px;
+    left: -4px;
+    width: 14px;
+    height: 20px;
+    background: linear-gradient(180deg, #7f93a6 0%, #4a5b6d 100%);
+    border: 1px solid #05070c;
+    border-radius: 4px 4px 8px 8px;
+    z-index: 2;
+  }
+  .knight .shield::after { /* filter cross emblem */
+    content: "";
+    position: absolute;
+    inset: 4px;
+    background:
+      linear-gradient(var(--orange), var(--orange)) center/3px 100% no-repeat,
+      linear-gradient(var(--orange), var(--orange)) center/100% 3px no-repeat;
+  }
+  .knight .legs {
+    position: absolute;
+    bottom: 0;
+    left: 9px;
+    width: 16px;
+    height: 10px;
+    background: #46586a;
+    border: 1px solid #05070c;
+    border-bottom: none;
+  }
+  .knight .sword {
+    position: absolute;
+    right: -3px;
+    bottom: 8px;
+    width: 3px;
+    height: 40px;
+    background: linear-gradient(180deg, #eef4fa, #9fb4c7);
+    box-shadow: 0 0 6px rgba(238, 244, 250, 0.7);
+    transform: rotate(18deg);
+    transform-origin: bottom;
+  }
+  .knight .sword::before { /* crossguard */
+    content: "";
+    position: absolute;
+    bottom: 6px;
+    left: -4px;
+    width: 11px;
+    height: 3px;
+    background: var(--gold);
+  }
+  .squad .banner {
+    position: absolute;
+    top: -18px;
+    left: -12px;
+    right: -12px;
+    text-align: center;
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    color: var(--steel);
+    white-space: nowrap;
+  }
+
+  /* the filter projectiles + bounce ding */
+  .shot {
+    position: absolute;
+    height: 3px;
+    border-radius: 3px;
+    background: var(--steel);
+    box-shadow: 0 0 6px rgba(159, 180, 199, 0.7);
+    z-index: 12;
+  }
+  .ding {
+    position: absolute;
+    z-index: 13;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    color: var(--steel);
+    text-shadow: 0 0 10px rgba(159, 180, 199, 0.6);
+    transform: rotate(-8deg);
+  }
+
+  /* ---------- charging horde (right) ---------- */
+  .horde { position: absolute; inset: 0; z-index: 10; }
+  .creature {
+    position: absolute;
+    border: 3px solid var(--magenta);
+    border-radius: 7px;
+    background: #05070c;
+    overflow: hidden;
+    box-shadow:
+      0 0 0 1px #05070c,
+      0 0 16px rgba(255, 61, 245, 0.55),
+      0 10px 22px rgba(0, 0, 0, 0.6);
+  }
+  .creature.orange {
+    border-color: var(--orange);
+    box-shadow:
+      0 0 0 1px #05070c,
+      0 0 16px rgba(255, 107, 53, 0.55),
+      0 10px 22px rgba(0, 0, 0, 0.6);
+  }
+  .creature img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .creature img.pixel { image-rendering: pixelated; }
+  /* speed streaks trailing to the right (charging LEFT) */
+  .creature::after {
+    content: "";
+    position: absolute;
+    top: 6px;
+    bottom: 6px;
+    right: -34px;
+    width: 34px;
+    background: repeating-linear-gradient(
+      to bottom,
+      rgba(255, 61, 245, 0.55) 0 2px,
+      rgba(255, 61, 245, 0) 2px 8px);
+    -webkit-mask-image: linear-gradient(to right, #000, transparent);
+    mask-image: linear-gradient(to right, #000, transparent);
+  }
+  .creature.orange::after {
+    background: repeating-linear-gradient(
+      to bottom,
+      rgba(255, 107, 53, 0.55) 0 2px,
+      rgba(255, 107, 53, 0) 2px 8px);
+  }
+  .tag {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    font-size: 8px;
+    letter-spacing: 0.08em;
+    text-align: center;
+    text-transform: uppercase;
+    color: var(--ink);
+    background: rgba(5, 7, 12, 0.82);
+    border-top: 1px solid rgba(255, 61, 245, 0.5);
+    padding: 1px 0;
+    z-index: 3;
+  }
+
+  /* ---------- bottom strip ---------- */
+  .strip {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 60px;
+    z-index: 30;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 0 44px;
+    background: linear-gradient(180deg, rgba(23, 28, 40, 0.6), #0a0d13);
+    border-top: 2px solid var(--orange);
+  }
+  .strip .mandate {
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--orange);
+    text-shadow: 0 0 10px rgba(255, 107, 53, 0.4);
+    white-space: nowrap;
+  }
+  .strip .mandate .blk { color: var(--gold); }
+  .strip .url {
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    color: var(--ink);
+    white-space: nowrap;
+  }
+  .strip .url .dot { color: var(--magenta); }
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="head">
+      <span class="kicker">Live · Every unit is a real Bitcoin transaction</span>
+      <h1 class="title">The Battle for <span class="spam">Blockspace</span></h1>
+      <p class="tagline">Watch the <b>Filter Knights</b> lose in real time — every unit is a real Bitcoin transaction.</p>
+    </div>
+
+    <div class="field">
+      <!-- castle + knight squad -->
+      <div class="keep">
+        <div class="keep-label">
+          <div class="keep-height">▲ BLOCK 961,632</div>
+          <div class="keep-name">THE BLOCKCHAIN</div>
+        </div>
+        <div class="castle">
+          <div class="lamp"></div>
+          <div class="gate"></div>
+        </div>
+      </div>
+
+      <div class="squad">
+        <div class="banner">LUKE-JR · MECHANIC · KRATTER</div>
+        <div class="knight">
+          <div class="sword"></div>
+          <div class="helm"></div>
+          <div class="shield"></div>
+          <div class="body"></div>
+          <div class="legs"></div>
+        </div>
+        <div class="knight">
+          <div class="sword"></div>
+          <div class="helm"></div>
+          <div class="shield"></div>
+          <div class="body"></div>
+          <div class="legs"></div>
+        </div>
+        <div class="knight">
+          <div class="sword"></div>
+          <div class="helm"></div>
+          <div class="shield"></div>
+          <div class="body"></div>
+          <div class="legs"></div>
+        </div>
+      </div>
+
+      <!-- filter shots bouncing off -->
+      <div class="shot" style="left:300px; bottom:150px; width:60px; transform:rotate(-6deg);"></div>
+      <div class="shot" style="left:330px; bottom:96px; width:44px; transform:rotate(4deg);"></div>
+      <div class="ding" style="left:392px; bottom:158px;">POLICY&nbsp;≠&nbsp;CONSENSUS</div>
+
+      <!-- charging JPEG horde (real PFP inscriptions) -->
+      <div class="horde">
+        <div class="creature" style="left:470px; bottom:20px; width:150px; height:150px; z-index:6;">
+          <img src="../assets/pfps/frogs/01.png" alt="">
+          <div class="tag">frog</div>
+        </div>
+        <div class="creature orange" style="left:620px; bottom:96px; width:126px; height:126px; z-index:5;">
+          <img src="../assets/pfps/wizards/05.png" alt="">
+          <div class="tag">wizard</div>
+        </div>
+        <div class="creature" style="left:762px; bottom:16px; width:132px; height:132px; z-index:5;">
+          <img src="../assets/pfps/quantumcats/01.png" alt="">
+          <div class="tag">quantum cat</div>
+        </div>
+        <div class="creature orange" style="left:892px; bottom:118px; width:112px; height:112px; z-index:4;">
+          <img src="../assets/pfps/puppets/01.png" alt="">
+          <div class="tag">puppet</div>
+        </div>
+        <div class="creature" style="left:1002px; bottom:20px; width:118px; height:118px; z-index:4;">
+          <img src="../assets/pfps/omb/01.png" alt="">
+          <div class="tag">maxi biz</div>
+        </div>
+        <div class="creature orange" style="left:1096px; bottom:120px; width:100px; height:100px; z-index:3;">
+          <img src="../assets/pfps/nodemonkes/01.png" alt="" class="pixel">
+          <div class="tag">monke</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="strip">
+      <div class="mandate">Mandatory BIP-110 signaling: <span class="blk">Block 961,632</span></div>
+      <div class="url">bitcoin-spam-war<span class="dot">.</span>vercel<span class="dot">.</span>app</div>
+    </div>
+  </div>
+</body>
+</html>

@@ -12,6 +12,9 @@
 // Every getElementById target used here MUST exist in index.html.
 
 import { RULES } from './classify.js';
+import { pickPfp } from './sprites.js';
+
+const PFP_BASE = 'assets/pfps/'; // same-origin collection-art assets
 
 // --- BIP-110 deployment constants (from docs/research/bip110.json) ----------
 const MANDATORY_SIGNALING_BLOCK = 961632; // blocks not signaling get rejected
@@ -82,6 +85,36 @@ const nextKnight = () => KNIGHTS[knightIdx++ % KNIGHTS.length];
 
 export function initHud({ feed, battlefield, taunts }) {
   const pickTaunt = (taunts && taunts.pickTaunt) || (() => '');
+
+  // ---- collection PFPs -----------------------------------------------------
+  // HUD fetches its OWN copy of the manifest (decoupled from the engine): the
+  // kill feed is built straight from block reports whose verdicts never passed
+  // through battle.js, so we recompute the identical deterministic face here via
+  // sprites.pickPfp. Fetch is best-effort — no manifest → emoji only, no errors.
+  let pfpManifest = null;
+  if (typeof fetch === 'function') {
+    fetch(PFP_BASE + 'manifest.json')
+      .then((r) => (r && r.ok ? r.json() : null))
+      .then((m) => { if (m && m.collections) pfpManifest = m; })
+      .catch(() => { /* PFPs are cosmetic; ignore */ });
+  }
+  // Resolve {collection(displayName), file} for a violator, or null. Prefers the
+  // pick battle.js already stamped on the verdict (verdict._pfp) so the dossier
+  // matches the on-field sprite exactly; otherwise recomputes from the txid.
+  function pfpFor(tx, verdict) {
+    if (!verdict) return null;
+    if (verdict._pfp && verdict._pfp.file) return verdict._pfp;
+    if (verdict.archetype !== 'violator') return null;
+    if (!pfpManifest) return null;
+    const p = pickPfp(verdict.protocol, (tx && tx.txid) || verdict.txid, pfpManifest);
+    return p ? { collection: p.name, file: p.file } : null;
+  }
+  function pfpImgTag(pfp, size) {
+    return `<img class="pfp-art" src="${escapeHtml(PFP_BASE + pfp.file)}" ` +
+      `alt="${escapeHtml(pfp.collection)} sample piece" width="${size}" height="${size}" ` +
+      `loading="lazy" style="width:${size}px;height:${size}px;object-fit:cover;` +
+      `border-radius:${size >= 40 ? 4 : 3}px;vertical-align:middle;flex:0 0 auto">`;
+  }
 
   // ---- session state -------------------------------------------------------
   const state = {
@@ -198,8 +231,12 @@ export function initHud({ feed, battlefield, taunts }) {
       ? fmtBytes(verdict.dataBytes)
       : `${fmtInt(tx.vsize)} vB`;
     const proto = verdict.protocol || 'data';
+    const pfp = pfpFor(tx, verdict);
+    const face = pfp
+      ? pfpImgTag(pfp, 20)
+      : `<span class="kill-emoji">${unitEmoji(verdict)}</span>`;
     li.innerHTML =
-      `<span class="kill-emoji">${unitEmoji(verdict)}</span>` +
+      face +
       `<span class="kill-body">` +
         `<span class="kill-proto">${proto}</span> ` +
         `<span class="kill-bytes">${bytesLabel}</span>` +
@@ -244,6 +281,18 @@ export function initHud({ feed, battlefield, taunts }) {
     setText('dossier-title', verdict.label || 'Unidentified unit');
 
     const rows = [];
+    // Collection art in the dossier header (cosmetic — the real inscription
+    // isn't fetched; this is a deterministic sample piece).
+    const pfp = pfpFor(tx, verdict);
+    if (pfp) {
+      rows.push(
+        `<div class="dossier-pfp" style="display:flex;align-items:center;gap:8px;margin:0 0 10px">` +
+        pfpImgTag(pfp, 40) +
+        `<span class="dossier-pfp-note" style="color:#9fb4c7;font-size:11px;opacity:.85">` +
+        `(cosmetic — sample piece from ${escapeHtml(pfp.collection)})</span>` +
+        `</div>`
+      );
+    }
     const complyClass = verdict.compliant ? 'ok' : 'bad';
     const complyText = verdict.compliant
       ? 'BIP-110 COMPLIANT ✓ (would pass if the fork were active)'

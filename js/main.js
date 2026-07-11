@@ -7,6 +7,7 @@ import { MempoolFeed } from './feed.js';
 import { Battlefield } from './battle.js';
 import * as taunts from './taunts.js';
 import { initHud } from './hud.js';
+import { initChat } from './chat.js';
 
 const canvas = document.getElementById('battlefield');
 
@@ -46,3 +47,11 @@ document.addEventListener('visibilitychange', () => {
 });
 
 feed.start();
+
+// Trench Chat is entirely optional and must never take the battle down with it.
+try {
+  initChat({ config: CONFIG });
+} catch (err) {
+  // Chat is a bolt-on; swallow any init failure so the battlefield keeps running.
+  console.warn('Trench Chat failed to init (battle unaffected):', err);
+}

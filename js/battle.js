@@ -23,8 +23,10 @@
 import {
   drawSky, drawGround, drawScorch, drawScanlines, drawCastle, drawKnight,
   drawCameo, drawCoin, drawInfiltrator, drawViolator, drawProjectile,
-  drawDing, drawSpeechBubble, drawBanner,
+  drawDing, drawSpeechBubble, drawBanner, pickPfp,
 } from './sprites.js';
+
+const PFP_BASE = 'assets/pfps/'; // collection-art assets, same-origin
 
 // ---- palette (duplicated from sprites.js on purpose; see SPEC §Style) ------
 const C = {
@@ -190,6 +192,10 @@ export class Battlefield {
     this.height = null;
     this.projectedText = '';
 
+    // collection PFPs (loaded async; emoji fallback until then / on failure)
+    this.manifest = null;
+    this.pfpImages = new Map(); // fileRel -> HTMLImageElement
+
     // ambient schedulers
     this.knightSpeakTimer = rand(3, 7);
     this.spamSpeakTimer = rand(4, 8);
@@ -208,7 +214,54 @@ export class Battlefield {
     canvas.addEventListener('mousemove', this._onMove);
     window.addEventListener('resize', this._onResize);
     document.addEventListener('visibilitychange', this._onVis);
+    this.loadPfps();
     this._raf = requestAnimationFrame(this._loop);
+  }
+
+  // ---- collection PFPs ----------------------------------------------------
+  // Fetch the manifest and lazily preload the (tiny, 64x64) collection images.
+  // Non-blocking: construction never waits on it, and any failure leaves the
+  // horde on the emoji fallback with zero console errors.
+  loadPfps() {
+    if (typeof fetch !== 'function') return;
+    fetch(PFP_BASE + 'manifest.json')
+      .then((r) => (r && r.ok ? r.json() : null))
+      .then((m) => {
+        if (!m || !m.collections) return;
+        this.manifest = m;
+        if (typeof Image === 'function') {
+          for (const slug in m.collections) {
+            const files = (m.collections[slug] && m.collections[slug].files) || [];
+            for (const file of files) {
+              if (this.pfpImages.has(file)) continue;
+              const img = new Image();
+              img.decoding = 'async';
+              img.onerror = () => { /* stays incomplete → emoji fallback */ };
+              img.src = PFP_BASE + file;
+              this.pfpImages.set(file, img);
+            }
+          }
+        }
+        // retro-skin violators already on the field (manifest may land after
+        // the first backfill surge has spawned).
+        for (const u of this.units) {
+          if (u.kind === 'violator' && !u.pfp) this.assignPfp(u);
+        }
+      })
+      .catch(() => { /* no manifest → emoji everywhere */ });
+  }
+
+  // Deterministic face for a violator unit; also stamps verdict._pfp so the HUD
+  // dossier shows the same art (see hud.js pfpFor). Safe to call before the
+  // manifest loads (no-op) — resets are done by the caller.
+  assignPfp(u) {
+    if (!this.manifest) return;
+    const proto = u.verdict && u.verdict.protocol;
+    const pick = pickPfp(proto, u.txid, this.manifest);
+    if (!pick) return;
+    u.pfp = pick;
+    u.pfpImg = this.pfpImages.get(pick.file) || null;
+    if (u.verdict) u.verdict._pfp = { collection: pick.name, file: pick.file };
   }
 
   destroy() {
@@ -315,6 +368,11 @@ export class Battlefield {
     } else {
       u.size = 20; // citizen coin diameter-ish
     }
+
+    // collection art (reset first — units are recycled from _deadUnits)
+    u.pfp = null;
+    u.pfpImg = null;
+    if (kind === 'violator') this.assignPfp(u);
 
     if (hidden) {
       // tab is backgrounded: drop straight into the pit so we don't get a
@@ -975,6 +1033,7 @@ export class Battlefield {
       drawViolator(ctx, u.x, u.y - u.size * 0.5, u.size, {
         emoji: u.emoji, hue: u.hue, t: this.time,
         charge: u.state === 'charge' ? 1 : 0,
+        image: u.pfpImg, pixel: u.pfp ? u.pfp.pixel : false,
       });
     }
     ctx.globalAlpha = 1;
