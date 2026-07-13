@@ -19,12 +19,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
----
-
-NOTE ON ARTWORK: This license covers the code and original copy only. The
-collection artwork under assets/pfps/ (NodeMonkes, Bitcoin Puppets, Quantum
-Cats, Taproot Wizards, Wizards of Ord, Bitcoin Frogs, Ordinal Maxi Biz,
-Runestone, Bitcoin Stamps, Rare Pepe) belongs to its respective creators and
-holders; the tiny sprites here are sample pieces used in a non-commercial
-parody visualization, with sources recorded in assets/pfps/sources.json.
